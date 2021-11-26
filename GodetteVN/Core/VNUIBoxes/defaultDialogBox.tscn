@@ -1,0 +1,49 @@
+[gd_scene load_steps=6 format=2]
+
+[ext_resource path="res://GodetteVN/Core/VNUIBoxes/defaultDialogBox.gd" type="Script" id=1]
+[ext_resource path="res://fonts/DEFAULT_BOLD.tres" type="DynamicFont" id=2]
+[ext_resource path="res://fonts/DEFAULT_ITALICS.tres" type="DynamicFont" id=3]
+[ext_resource path="res://fonts/DEFAULT_NORMAL.tres" type="DynamicFont" id=4]
+[ext_resource path="res://GodetteVN/Core/VNUIBoxes/dialogBoxCore.tscn" type="PackedScene" id=5]
+
+[node name="dialogBoxOuter" type="ColorRect"]
+margin_left = 436.0
+margin_top = 831.776
+margin_right = 1509.0
+margin_bottom = 999.776
+color = Color( 1, 1, 1, 0.627451 )
+script = ExtResource( 1 )
+__meta__ = {
+"_edit_group_": true,
+"_edit_use_anchors_": false
+}
+
+[node name="resizeHandler" type="Control" parent="."]
+anchor_left = 1.0
+anchor_right = 1.0
+margin_left = -20.1306
+margin_top = 1.12244
+margin_right = -2.13062
+margin_bottom = 17.1224
+mouse_default_cursor_shape = 11
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="dialogBoxCore" parent="." instance=ExtResource( 5 )]
+margin_left = 16.0
+margin_top = 12.0
+margin_right = 1047.0
+margin_bottom = 161.0
+mouse_filter = 1
+custom_fonts/italics_font = ExtResource( 3 )
+custom_fonts/bold_font = ExtResource( 2 )
+custom_fonts/normal_font = ExtResource( 4 )
+visible_characters = -1
+
+[connection signal="gui_input" from="." to="." method="_on_dialogBox_gui_input"]
+[connection signal="mouse_entered" from="." to="." method="_on_dialogBox_mouse_entered"]
+[connection signal="mouse_exited" from="." to="." method="_on_dialogBox_mouse_exited"]
+[connection signal="gui_input" from="resizeHandler" to="." method="_on_resizeHandler_gui_input"]
+[connection signal="mouse_entered" from="resizeHandler" to="." method="_on_resizeHandler_mouse_entered"]
+[connection signal="mouse_exited" from="resizeHandler" to="." method="_on_resizeHandler_mouse_exited"]

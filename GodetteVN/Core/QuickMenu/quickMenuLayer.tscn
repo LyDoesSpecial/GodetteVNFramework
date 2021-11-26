@@ -1,0 +1,153 @@
+[gd_scene load_steps=5 format=2]
+
+[ext_resource path="res://fonts/ArchitectsDaughter.ttf" type="DynamicFontData" id=1]
+[ext_resource path="res://GodetteVN/Core/QuickMenu/quickMenuLayer.gd" type="Script" id=2]
+[ext_resource path="res://GodetteVN/Core/_Details/HelperClasses/VNTextButton.gd" type="Script" id=3]
+
+[sub_resource type="DynamicFont" id=1]
+size = 28
+font_data = ExtResource( 1 )
+
+[node name="quickMenu" type="Node2D"]
+script = ExtResource( 2 )
+
+[node name="skipButton" type="Button" parent="."]
+margin_left = 650.0
+margin_top = 1020.0
+margin_right = 717.0
+margin_bottom = 1066.0
+focus_mode = 0
+custom_colors/font_color = Color( 1, 1, 1, 1 )
+custom_fonts/font = SubResource( 1 )
+shortcut_in_tooltip = false
+text = "Skip"
+flat = true
+script = ExtResource( 3 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="autoButton" type="Button" parent="."]
+margin_left = 720.0
+margin_top = 1020.0
+margin_right = 791.0
+margin_bottom = 1066.0
+focus_mode = 0
+custom_colors/font_color = Color( 1, 1, 1, 1 )
+custom_fonts/font = SubResource( 1 )
+shortcut_in_tooltip = false
+text = "Auto"
+flat = true
+script = ExtResource( 3 )
+
+[node name="SettingButton" type="Button" parent="."]
+margin_left = 1139.58
+margin_top = 1019.11
+margin_right = 1238.58
+margin_bottom = 1065.11
+focus_mode = 0
+custom_colors/font_color = Color( 1, 1, 1, 1 )
+custom_colors/font_color_hover = Color( 0.160784, 0, 0, 1 )
+custom_fonts/font = SubResource( 1 )
+shortcut_in_tooltip = false
+text = "Setting"
+flat = true
+script = ExtResource( 3 )
+
+[node name="loadButton" type="Button" parent="."]
+margin_left = 880.0
+margin_top = 1020.0
+margin_right = 955.0
+margin_bottom = 1066.0
+focus_mode = 0
+custom_colors/font_color = Color( 1, 1, 1, 1 )
+custom_colors/font_color_hover = Color( 0.160784, 0, 0, 1 )
+custom_fonts/font = SubResource( 1 )
+shortcut_in_tooltip = false
+text = "Load"
+flat = true
+script = ExtResource( 3 )
+
+[node name="QsaveButton" type="Button" parent="."]
+margin_left = 965.707
+margin_top = 1019.93
+margin_right = 1063.71
+margin_bottom = 1065.93
+focus_mode = 0
+custom_colors/font_color = Color( 1, 1, 1, 1 )
+custom_colors/font_color_hover = Color( 0.160784, 0, 0, 1 )
+custom_fonts/font = SubResource( 1 )
+shortcut_in_tooltip = false
+text = "Q.Save"
+flat = true
+script = ExtResource( 3 )
+
+[node name="saveButton" type="Button" parent="."]
+margin_left = 800.0
+margin_top = 1020.82
+margin_right = 874.0
+margin_bottom = 1066.82
+focus_mode = 0
+custom_colors/font_color = Color( 1, 1, 1, 1 )
+custom_colors/font_color_hover = Color( 0.160784, 0, 0, 1 )
+custom_fonts/font = SubResource( 1 )
+shortcut_in_tooltip = false
+text = "Save"
+flat = true
+script = ExtResource( 3 )
+
+[node name="historyButton" type="Button" parent="."]
+margin_left = 1069.58
+margin_top = 1020.03
+margin_right = 1131.58
+margin_bottom = 1066.03
+focus_mode = 0
+custom_colors/font_color = Color( 1, 1, 1, 1 )
+custom_colors/font_color_hover = Color( 0.160784, 0, 0, 1 )
+custom_fonts/font = SubResource( 1 )
+shortcut_in_tooltip = false
+text = "Hist."
+flat = true
+script = ExtResource( 3 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="mainButton" type="Button" parent="."]
+margin_left = 1249.58
+margin_top = 1019.59
+margin_right = 1316.58
+margin_bottom = 1065.59
+focus_mode = 0
+custom_colors/font_color = Color( 1, 1, 1, 1 )
+custom_colors/font_color_hover = Color( 0.160784, 0, 0, 1 )
+custom_fonts/font = SubResource( 1 )
+shortcut_in_tooltip = false
+text = "Main"
+flat = true
+script = ExtResource( 3 )
+
+[node name="quitButton" type="Button" parent="."]
+visible = false
+margin_left = 900.0
+margin_top = 1020.0
+margin_right = 961.0
+margin_bottom = 1066.0
+focus_mode = 0
+custom_colors/font_color = Color( 1, 1, 1, 1 )
+custom_colors/font_color_hover = Color( 0.160784, 0, 0, 1 )
+custom_fonts/font = SubResource( 1 )
+shortcut_in_tooltip = false
+text = "Quit"
+flat = true
+script = ExtResource( 3 )
+
+[connection signal="pressed" from="skipButton" to="." method="_on_skipButton_pressed"]
+[connection signal="pressed" from="autoButton" to="." method="_on_autoButton_pressed"]
+[connection signal="pressed" from="SettingButton" to="." method="_on_SettingButton_pressed"]
+[connection signal="pressed" from="loadButton" to="." method="_on_loadButton_pressed"]
+[connection signal="pressed" from="QsaveButton" to="." method="_on_QsaveButton_pressed"]
+[connection signal="pressed" from="saveButton" to="." method="_on_saveButton_pressed"]
+[connection signal="pressed" from="historyButton" to="." method="on_historyButton_pressed"]
+[connection signal="pressed" from="mainButton" to="." method="_on_mainButton_pressed"]
+[connection signal="pressed" from="quitButton" to="." method="_on_quitButton_pressed"]

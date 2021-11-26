@@ -1,0 +1,224 @@
+[gd_scene load_steps=8 format=2]
+
+[ext_resource path="res://fonts/ubuntu.tres" type="DynamicFont" id=1]
+[ext_resource path="res://addons/ActorEditor/actorEditor.gd" type="Script" id=2]
+[ext_resource path="res://fonts/Ubuntu-Regular.ttf" type="DynamicFontData" id=4]
+[ext_resource path="res://addons/VNScriptEditor/ubuntuRedOutlined.tres" type="Theme" id=5]
+[ext_resource path="res://addons/VNScriptEditor/ubuntuRegularTheme.tres" type="Theme" id=6]
+
+[sub_resource type="StyleBoxFlat" id=1]
+bg_color = Color( 0.2, 0.227451, 0.309804, 1 )
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
+border_color = Color( 0.682353, 0.717647, 0.858824, 1 )
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
+
+[sub_resource type="DynamicFont" id=2]
+size = 30
+font_data = ExtResource( 4 )
+
+[node name="editor" type="PanelContainer"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+size_flags_vertical = 3
+theme = ExtResource( 5 )
+custom_styles/panel = SubResource( 1 )
+script = ExtResource( 2 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="hbox" type="HBoxContainer" parent="."]
+margin_left = 3.0
+margin_top = 3.0
+margin_right = 1917.0
+margin_bottom = 1077.0
+custom_constants/separation = 20
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="space1" type="Control" parent="hbox"]
+margin_bottom = 1074.0
+
+[node name="editOptions" type="VBoxContainer" parent="hbox"]
+margin_left = 20.0
+margin_right = 488.0
+margin_bottom = 1074.0
+custom_constants/separation = 24
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="msg" type="Label" parent="hbox/editOptions"]
+margin_right = 468.0
+margin_bottom = 249.0
+size_flags_vertical = 2
+custom_fonts/font = ExtResource( 1 )
+text = "
+Find and save your actor sprites to scene for further edits.
+
+You can only preview static sprites.
+
+"
+align = 1
+valign = 1
+autowrap = true
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="main" type="VBoxContainer" parent="hbox/editOptions"]
+margin_top = 337.0
+margin_right = 468.0
+margin_bottom = 650.0
+size_flags_vertical = 3
+
+[node name="enterUID" type="Label" parent="hbox/editOptions/main"]
+margin_right = 468.0
+margin_bottom = 33.0
+custom_fonts/font = ExtResource( 1 )
+text = "Enter UID:"
+align = 1
+valign = 1
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="LineEdit" type="LineEdit" parent="hbox/editOptions/main"]
+margin_top = 37.0
+margin_right = 468.0
+margin_bottom = 81.0
+custom_fonts/font = SubResource( 2 )
+caret_blink = true
+caret_blink_speed = 0.5
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Button" type="Button" parent="hbox/editOptions/main"]
+margin_top = 85.0
+margin_right = 468.0
+margin_bottom = 124.0
+custom_fonts/font = ExtResource( 1 )
+text = "Find"
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="assetInfo" type="HBoxContainer" parent="hbox/editOptions"]
+margin_top = 674.0
+margin_right = 468.0
+margin_bottom = 987.0
+size_flags_vertical = 3
+custom_constants/separation = 20
+
+[node name="dummySpace" type="Control" parent="hbox/editOptions/assetInfo"]
+margin_bottom = 313.0
+
+[node name="spriteInfo" type="VBoxContainer" parent="hbox/editOptions/assetInfo"]
+margin_left = 20.0
+margin_right = 239.0
+margin_bottom = 313.0
+size_flags_horizontal = 2
+
+[node name="spriteName" type="Label" parent="hbox/editOptions/assetInfo/spriteInfo"]
+margin_right = 219.0
+margin_bottom = 33.0
+custom_fonts/font = ExtResource( 1 )
+text = "Available Sprites:"
+align = 1
+valign = 1
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="spriteOptions" type="OptionButton" parent="hbox/editOptions/assetInfo/spriteInfo"]
+margin_top = 37.0
+margin_right = 219.0
+margin_bottom = 76.0
+custom_fonts/font = ExtResource( 1 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="animInfo" type="VBoxContainer" parent="hbox/editOptions/assetInfo"]
+margin_left = 259.0
+margin_right = 468.0
+margin_bottom = 313.0
+size_flags_horizontal = 2
+
+[node name="animName" type="Label" parent="hbox/editOptions/assetInfo/animInfo"]
+margin_right = 209.0
+margin_bottom = 33.0
+custom_fonts/font = ExtResource( 1 )
+text = "Available Anims:"
+align = 1
+valign = 1
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="animOptions" type="OptionButton" parent="hbox/editOptions/assetInfo/animInfo"]
+margin_top = 37.0
+margin_right = 209.0
+margin_bottom = 76.0
+custom_fonts/font = ExtResource( 1 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="generateButton" type="Button" parent="hbox/editOptions"]
+margin_top = 1011.0
+margin_right = 468.0
+margin_bottom = 1050.0
+custom_fonts/font = ExtResource( 1 )
+text = "Save Sprite to Scene (.tscn)"
+clip_text = true
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="bottomspace" type="Control" parent="hbox/editOptions"]
+margin_top = 1074.0
+margin_right = 468.0
+margin_bottom = 1074.0
+
+[node name="space2" type="Control" parent="hbox"]
+margin_left = 508.0
+margin_right = 508.0
+margin_bottom = 1074.0
+
+[node name="preview" type="TextureRect" parent="hbox"]
+margin_left = 961.0
+margin_right = 1481.0
+margin_bottom = 1074.0
+rect_min_size = Vector2( 520, 0 )
+size_flags_horizontal = 6
+expand = true
+stretch_mode = 5
+
+[node name="charaGenPopup" type="AcceptDialog" parent="."]
+margin_left = 4.0
+margin_top = 4.0
+margin_right = 1004.0
+margin_bottom = 604.0
+size_flags_horizontal = 4
+size_flags_vertical = 4
+theme = ExtResource( 6 )
+window_title = ""
+resizable = true
+dialog_autowrap = true
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[connection signal="pressed" from="hbox/editOptions/main/Button" to="." method="_on_Button_pressed"]
+[connection signal="item_selected" from="hbox/editOptions/assetInfo/spriteInfo/spriteOptions" to="." method="_on_spriteOptions_item_selected"]
+[connection signal="pressed" from="hbox/editOptions/generateButton" to="." method="_on_generateButton_pressed"]
+[connection signal="confirmed" from="charaGenPopup" to="." method="_on_charaGenPopup_confirmed"]

@@ -1,0 +1,13 @@
+[gd_scene load_steps=3 format=2]
+
+[ext_resource path="res://addons/ActorEditor/CharacterTemplate.gd" type="Script" id=1]
+[ext_resource path="res://GodetteVN/Characters/gt_expressionSheet.tres" type="SpriteFrames" id=2]
+
+[node name="gt" type="AnimatedSprite"]
+modulate = Color( 0.862745, 0.862745, 0.862745, 1 )
+frames = ExtResource( 2 )
+script = ExtResource( 1 )
+display_name = "Godette"
+unique_id = "gt"
+name_color = Color( 0.105882, 0.235294, 0.615686, 1 )
+fade_on_change = true

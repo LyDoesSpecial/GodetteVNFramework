@@ -1,0 +1,19 @@
+[gd_scene load_steps=3 format=2]
+
+[ext_resource path="res://GodetteVN/ClickableObjects/clickableObject2.gd" type="Script" id=1]
+[ext_resource path="res://assets/other/santa.png" type="Texture" id=2]
+
+[node name="object2" type="TextureButton"]
+margin_left = 88.7241
+margin_top = 649.385
+margin_right = 238.724
+margin_bottom = 806.385
+texture_normal = ExtResource( 2 )
+script = ExtResource( 1 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+change_to_on_click = "obj2"
+
+[connection signal="mouse_entered" from="." to="." method="_on_object2_mouse_entered"]
+[connection signal="mouse_exited" from="." to="." method="_on_object2_mouse_exited"]

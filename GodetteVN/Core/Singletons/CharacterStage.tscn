@@ -1,0 +1,18 @@
+[gd_scene load_steps=2 format=2]
+
+[ext_resource path="res://GodetteVN/Core/Singletons/CharacterStage.gd" type="Script" id=1]
+
+[node name="stage" type="Node2D"]
+z_index = 1
+script = ExtResource( 1 )
+__meta__ = {
+"_editor_description_": ""
+}
+
+[node name="other" type="Node2D" parent="."]
+
+[node name="sideImage" type="Sprite" parent="other"]
+position = Vector2( -35, 530 )
+centered = false
+
+[node name="characters" type="Node2D" parent="."]

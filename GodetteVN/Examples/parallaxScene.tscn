@@ -1,0 +1,81 @@
+[gd_scene load_steps=12 format=2]
+
+[ext_resource path="res://GodetteVN/Core/_Details/background.tscn" type="PackedScene" id=2]
+[ext_resource path="res://GodetteVN/Core/VNUI.tscn" type="PackedScene" id=3]
+[ext_resource path="res://GodetteVN/Examples/parallaxScene.gd" type="Script" id=4]
+[ext_resource path="res://assets/backgrounds/p6.png" type="Texture" id=5]
+[ext_resource path="res://assets/backgrounds/p2.png" type="Texture" id=6]
+[ext_resource path="res://assets/backgrounds/p4.png" type="Texture" id=7]
+[ext_resource path="res://assets/backgrounds/p5.png" type="Texture" id=8]
+[ext_resource path="res://assets/backgrounds/p3.png" type="Texture" id=9]
+[ext_resource path="res://assets/backgrounds/p7.png" type="Texture" id=10]
+[ext_resource path="res://assets/backgrounds/p8.png" type="Texture" id=11]
+[ext_resource path="res://GodetteVN/Examples/ParallaxBackground.gd" type="Script" id=12]
+
+[node name="parallaxScene" type="Node2D"]
+script = ExtResource( 4 )
+debug_mode = true
+scene_description = "Parallax Example"
+float_text = "res://GodetteVN/fundamentals/details/floatText.tscn"
+
+[node name="ParallaxBackground" type="ParallaxBackground" parent="."]
+script = ExtResource( 12 )
+
+[node name="moonLayer" type="ParallaxLayer" parent="ParallaxBackground"]
+motion_scale = Vector2( 0.1, 1 )
+motion_mirroring = Vector2( 1980, 0 )
+
+[node name="Sprite" type="Sprite" parent="ParallaxBackground/moonLayer"]
+texture = ExtResource( 6 )
+centered = false
+
+[node name="ParallaxLayer2" type="ParallaxLayer" parent="ParallaxBackground"]
+motion_scale = Vector2( 0.2, 1 )
+motion_mirroring = Vector2( 1980, 0 )
+
+[node name="Sprite" type="Sprite" parent="ParallaxBackground/ParallaxLayer2"]
+texture = ExtResource( 9 )
+centered = false
+
+[node name="ParallaxLayer3" type="ParallaxLayer" parent="ParallaxBackground"]
+motion_scale = Vector2( 0.3, 1 )
+motion_mirroring = Vector2( 1980, 0 )
+
+[node name="Sprite" type="Sprite" parent="ParallaxBackground/ParallaxLayer3"]
+texture = ExtResource( 7 )
+centered = false
+
+[node name="ParallaxLayer4" type="ParallaxLayer" parent="ParallaxBackground"]
+motion_scale = Vector2( 0.4, 1 )
+motion_mirroring = Vector2( 1980, 0 )
+
+[node name="Sprite" type="Sprite" parent="ParallaxBackground/ParallaxLayer4"]
+texture = ExtResource( 8 )
+centered = false
+
+[node name="ParallaxLayer5" type="ParallaxLayer" parent="ParallaxBackground"]
+motion_scale = Vector2( 0.5, 1 )
+motion_mirroring = Vector2( 1980, 0 )
+
+[node name="Sprite" type="Sprite" parent="ParallaxBackground/ParallaxLayer5"]
+texture = ExtResource( 5 )
+centered = false
+
+[node name="ParallaxLayer6" type="ParallaxLayer" parent="ParallaxBackground"]
+motion_mirroring = Vector2( 1980, 0 )
+
+[node name="Sprite" type="Sprite" parent="ParallaxBackground/ParallaxLayer6"]
+texture = ExtResource( 10 )
+centered = false
+
+[node name="ParallaxLayer7" type="ParallaxLayer" parent="ParallaxBackground"]
+motion_mirroring = Vector2( 1980, 0 )
+
+[node name="Sprite" type="Sprite" parent="ParallaxBackground/ParallaxLayer7"]
+texture = ExtResource( 11 )
+centered = false
+
+[node name="background" parent="." instance=ExtResource( 2 )]
+visible = false
+
+[node name="VNUI" parent="." instance=ExtResource( 3 )]

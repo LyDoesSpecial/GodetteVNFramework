@@ -1,0 +1,14 @@
+[gd_scene load_steps=2 format=2]
+
+[ext_resource path="res://gui/default_save_thumbnail.png" type="Texture" id=1]
+
+[node name="thumbnail" type="TextureRect"]
+margin_left = 19.0
+margin_top = 5.0
+margin_right = 194.0
+margin_bottom = 115.0
+rect_min_size = Vector2( 175, 110 )
+mouse_filter = 2
+size_flags_vertical = 4
+texture = ExtResource( 1 )
+expand = true

@@ -1,0 +1,287 @@
+{
+	"Dialogs": {
+		"starter": [
+			{
+				"bg": "busstop.jpg",
+				"pixelate": 2
+			},
+			{
+				"dvar": "mo = (-mo+50)*10"
+			},
+			{
+				"chara": "female fadein",
+				"loc": "1600 600"
+			},
+			{
+				"bgm":"myuu-angels.mp3",
+				"fadein":3
+			},
+			{
+				"female": "EEEEEE",
+				"condition": [
+					[
+						"money1",
+						"money2"
+					],
+					"tt"
+				]
+			},
+			{
+				"female": "Hello there. Let me introduce you to the system",
+				"voice": "001.wav"
+			},
+			{
+				"chara": "female jump",
+				"amount": 800,
+				"time": 2,
+				"dir": "up"
+			},
+			{
+				"chara": "female spin",
+				"deg": 360,
+				"time": 2,
+				"type": "expo",
+				"sdir": -1
+			},
+			{
+				"chara": "female move",
+				"loc": "200 600",
+				"type": "expo",
+				"time": 2
+			},
+			{
+				"female": "This is how you show basic floating text."
+			},
+			{
+				"float": "[color=#ff0000]Hello World[/color]",
+				"wait": 1,
+				"time": 4,
+				"loc": "400 400",
+				"fadein": 1,
+				"font": "/fonts/ARegular.tres",
+				"dir": "R",
+				"speed": 100
+			},
+			{
+				"float": "[color=#ff0000]Hello World[/color]",
+				"wait": 1,
+				"time": 4,
+				"loc": "400 500",
+				"fadein": 1,
+				"font": "default",
+				"dir": "right"
+			},
+			{
+				"female": "Let me tint the screen"
+			},
+			{
+				"screen": "tint",
+				"color": "0 1 0 0.5",
+				"time": 1
+			},
+			{
+				"female": "Cool?"
+			},
+			{
+				"female": "You can turn off screen tint like this."
+			},
+			{
+				"screen": ""
+			},
+			{
+				"female": "Let me zoom the camera"
+			},
+			{
+				"camera": "zoom",
+				"scale": "0.5 0.5",
+				"loc": "100 200",
+				"time": 1
+			},
+			{
+				"female": "Let me move the camera"
+			},
+			{
+				"camera": "move",
+				"loc": "800 200",
+				"time": 1,
+				"type": "linear"
+			},
+			{
+				"female": "Now reset."
+			},
+			{
+				"camera": "reset"
+			},
+			{
+				"female": "Let's get moving."
+			},
+			{
+				"chara": "female move",
+				"loc": "600 600",
+				"type": "cubic",
+				"time": 1
+			},
+			{
+				"female": "Let it rain"
+			},
+			{
+				"weather": "rain"
+			},
+			{
+				"female": "Wanna see something spooky?"
+			},
+			{
+				"screen": "flashlight",
+				"scale": "1.5 1.5"
+			},
+			{
+				"female": "Cool?"
+			},
+			{
+				"female": "You can turn this off just like how you turn off tint."
+			},
+			{
+				"screen": ""
+			},
+			{
+				"female": "This is how you play your custom Godot special effect scenes."
+			},
+			{
+				"sfx": "/GodetteVN/SpecialScenes/flash.tscn"
+			},
+			{
+				"chara": "female jump",
+				"amount": 80,
+				"time": 0.25,
+				"dir": "up"
+			},
+			{
+				"female": "That scared me"
+			},
+			{
+				"chara": "test2 fadein",
+				"loc": "200 600",
+				"time": 2
+			},
+			{
+				"test2": "Hey."
+			},
+			{
+				"female": "Let's try out the NVL mode."
+			},
+			{
+				"test2": "Can you let me say something?"
+			},
+			{
+				"female": "Let's see NVL mode"
+			},
+			{
+				"nvl": "true"
+			},
+			{
+				"female": "I just said something"
+			},
+			{
+				"female": "more and more and more..."
+			},
+			{
+				"test2 angry": "This gal is not letting me speak."
+			},
+			{
+				"": "this is the narrator speaking."
+			},
+			{
+				"": "More and more and more."
+			},
+			{
+				"": "I know that you have [mo] much money."
+			},
+			{
+				"nvl": "false"
+			},
+			{
+				"female": "Ok. Enough of that NVL nonsense."
+			},
+			{
+				"test2": "I do think NVL is good for long narration or setting the mood in some cases."
+			},
+			{
+				"female": "I agree."
+			},
+			{
+				"test2": "Let's shake."
+			},
+			{
+				"chara": "all shake",
+				"amount": 200,
+				"time": 1
+			},
+			{
+				"female": "Let's make a choice, shall we?"
+			},
+			{
+				"choice": "choice1",
+				"female": "Should B leave?",
+				"id": 0
+			},
+			{
+				"female": "You chose Yes right?",
+				"condition": "le == 1"
+			},
+			{
+				"female": "You chose No right?",
+				"condition": "le == 0"
+			},
+			{
+				"female": "You chose the most ridiculous choice lol.",
+				"condition": "le == 3"
+			},
+			{
+				"female smile2": "Now let's try transitioning to another Godot scene."
+			},
+			{
+				"GDscene": "/GodetteVN/sampleScene2.tscn"
+			}
+		],
+		"b_leave": [
+			{
+				"dvar": "le = 1"
+			},
+			{
+				"test2": "Fine. I will leave."
+			},
+			{
+				"chara": "test2 fadeout",
+				"time": 10
+			},
+			{
+				"then": "starter",
+				"target id": 0
+			}
+		]
+	},
+	"Choices": {
+		"choice1": [
+			{
+				"Yes": {
+					"then": "b_leave"
+				}
+			},
+			{
+				"No": {
+					"dvar": "le = 0"
+				}
+			},
+			{
+				"condition": "mo>200",
+				"Haha I am rich": {
+					"dvar": "le = 3"
+				}
+			}
+		]
+	},
+	"Conditions": {
+		"money1": "mo>50",
+		"money2": "mo<1000"
+	}
+}

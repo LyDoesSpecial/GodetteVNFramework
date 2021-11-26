@@ -1,0 +1,63 @@
+[gd_scene load_steps=5 format=2]
+
+[ext_resource path="res://GodetteVN/Core/_Details/HelperClasses/VNScreen.gd" type="Script" id=1]
+[ext_resource path="res://fonts/ArchitectsDaughter.ttf" type="DynamicFontData" id=2]
+
+[sub_resource type="DynamicFont" id=2]
+size = 40
+font_data = ExtResource( 2 )
+
+[sub_resource type="DynamicFont" id=1]
+size = 40
+font_data = ExtResource( 2 )
+
+[node name="VNScreen" type="CanvasLayer"]
+layer = 10
+script = ExtResource( 1 )
+
+[node name="backgroundPic" type="TextureRect" parent="."]
+visible = false
+margin_right = 40.0
+margin_bottom = 40.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="backgroundColor" type="ColorRect" parent="."]
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_left = 3.36743
+margin_right = 3.36743
+rect_min_size = Vector2( 1920, 1080 )
+color = Color( 1, 1, 1, 0.92549 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="pageLabel" type="Label" parent="."]
+margin_left = 40.0
+margin_top = 16.0
+margin_right = 1900.0
+margin_bottom = 133.0
+custom_colors/font_color = Color( 0, 0, 0, 1 )
+custom_fonts/font = SubResource( 2 )
+text = "Page Title
+-----------------------------------------------------------------------------------------------------------------------------------------------------------"
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="returnButton" type="Button" parent="."]
+margin_left = 48.0
+margin_top = 952.0
+margin_right = 189.0
+margin_bottom = 1015.0
+custom_colors/font_color = Color( 0, 0, 0, 1 )
+custom_fonts/font = SubResource( 1 )
+text = "Return"
+flat = true
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[connection signal="pressed" from="returnButton" to="." method="_on_returnButton_pressed"]

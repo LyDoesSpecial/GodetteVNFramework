@@ -1,0 +1,15 @@
+$--DIALOG--starter
+#Your story begins here.
+
+bg::	busstop.jpg ;
+chara :: female join; loc :: 1600 700; expression :: default;
+female happy::	Hello world! ;
+
+
+
+
+
+$--END
+$--CONDITIONS
+
+$--END

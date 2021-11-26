@@ -1,0 +1,16 @@
+[gd_scene load_steps=3 format=2]
+
+[ext_resource path="res://GodetteVN/Core/ScreenTemplate/ScreenTemplate.tscn" type="PackedScene" id=1]
+[ext_resource path="res://GodetteVN/Core/SNL/saveMainBox.tscn" type="PackedScene" id=2]
+
+[node name="saveScreen" instance=ExtResource( 1 )]
+
+[node name="pageLabel" parent="." index="2"]
+text = "Save
+-----------------------------------------------------------------------------------------------------------------------------------------------------------"
+
+[node name="saveMainBox" parent="." index="4" instance=ExtResource( 2 )]
+margin_left = 249.734
+margin_top = 133.191
+margin_right = 1849.73
+margin_bottom = 1033.19

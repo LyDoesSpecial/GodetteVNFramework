@@ -1,0 +1,14 @@
+[gd_resource type="Resource" load_steps=3 format=2]
+
+[ext_resource path="res://GodetteVN/Core/_Details/Transition_Textures/diagonal_grayscale.png" type="Texture" id=1]
+[ext_resource path="res://GodetteVN/Core/_Details/Transition_Data/eh_TransitionData.gd" type="Script" id=2]
+
+
+[resource]
+script = ExtResource( 2 )
+color = Color( 0, 0, 0, 1 )
+duration = 0.5
+mask = ExtResource( 1 )
+smooth_size = 0.385
+transition_in = "white_to_black"
+transition_out = "black_to_white"

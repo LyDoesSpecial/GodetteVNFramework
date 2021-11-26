@@ -1,0 +1,1260 @@
+[gd_scene load_steps=6 format=2]
+
+[ext_resource path="res://addons/VNScriptEditor/ubuntuRegularTheme.tres" type="Theme" id=1]
+[ext_resource path="res://addons/VNScriptEditor/documentation/docManager.gd" type="Script" id=2]
+[ext_resource path="res://fonts/DEFAULT_ITALICS.tres" type="DynamicFont" id=4]
+[ext_resource path="res://fonts/DEFAULT_BOLD.tres" type="DynamicFont" id=5]
+[ext_resource path="res://fonts/DEFAULT_NORMAL.tres" type="DynamicFont" id=6]
+
+[node name="documentation" type="TabContainer"]
+margin_left = 1035.0
+margin_right = 1675.0
+margin_bottom = 800.0
+rect_min_size = Vector2( 345, 0 )
+size_flags_horizontal = 3
+theme = ExtResource( 1 )
+custom_fonts/font = ExtResource( 6 )
+tab_align = 0
+script = ExtResource( 2 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Intro" type="Tabs" parent="."]
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_left = 4.0
+margin_top = 58.0
+margin_right = -4.0
+margin_bottom = -4.0
+
+[node name="doc" type="RichTextLabel" parent="Intro"]
+margin_left = 2.0
+margin_right = 561.0
+margin_bottom = 706.0
+focus_mode = 2
+custom_fonts/italics_font = ExtResource( 4 )
+custom_fonts/bold_font = ExtResource( 5 )
+custom_fonts/normal_font = ExtResource( 6 )
+bbcode_enabled = true
+bbcode_text = "[font=res://addons/VNScriptEditor/documentation/title.tres]A Brief Introduction:[/font]
+
+The dialog system is a line-based event system. That means each line is one event and will proceed to the next line if current event is not a branching event. One line corresponds to one line number in the script editor. If you want to break new lines in one sentence, use the special token [nl] for that.
+
+Notice that this is not a programming language, although it is capable of doing some basic automated tasks. Because of this, it is impossible to incorproate everything the system is capable into commands in the script. I like to think of this script system as a script for a play. It contains the meat of the play, but there are extra things that have to be prepared in the backstage. That means you will have to write some GDscript for the extra functionalities.
+
+They system will try to understand the content of each line, but each line must follow a specific syntax to be recognized. Namely:
+
+[color=#ff0000][center]key1 :: value1; key2 :: value2 ; ... ... key_n :: value_n; [/center][/color]
+
+Each key-value pair is called a field. And one line is called an event. There are optional fields for each event. In this documentation, if you see
+
+[color=#ff0000][center] key :: * ;[/center][/color]
+
+That means this field is necessary and you will have to supply a valid value to the field. If you see
+
+[color=#ff0000][center] key :: (default_val) ;[/center][/color]
+
+then it means that this field is optional, and if the field is not given for the event, the default value in the parenthesis will be used.
+
+Moreover, because \"::\" is used to separate keys and values, if you want to use \"::\" in any dialog, you will have to replace it with the special token [dc]. Because \";\" is used to separate fields, you will need to use [sm] if you want to show a semicolon in your dialog. (This paragrah applies when you're writing script using this editor, not directly in GDscript.)
+
+[b]Wring Script Directly in GDscript[/b]
+
+If you're writing directly in GDscript, the syntax is similar, but you will have to write out the full dictionary wich represents the event, namely:
+
+[color=#ff0000][center]{\"key1\": \"val1\" ,...}[/center][/color]
+
+and put them in arrays. Notice, the values here do not need to be strings now. Also if the field supports it, you can even put arrays or dictionaries as values. The drawback is that you will have to manually type in all the quatation marks and the curly brackets and timelines in GDscript are not as well-organized as here.
+
+[font=res://addons/VNScriptEditor/documentation/title.tres]Special Tokens in Dialogs:[/font]
+
+Any Godot builtin bbcode.
+[nl]: new line. If you're using GDscript to write events, not this editor, you can also use \"\\n\".
+[dc]: double colon. (Same. No need in GDscript.)
+[sm]: semicolon. (Same. No need in GDscript.)
+[nw]: autoforward to next dialog without delay
+[lb]: the left square bracket \"[\" (Same. No need in GDscript.)
+[rb]: the right square bracket \"]\" (Same. No need in GDscript.)
+[dvar_identifer]: puts the value of the dvar in the text
+For example if you have a dvar called \"p_name\" for player_name, then put
+
+[color=#ff0000][center]a happy:: So your name is [p_name].;[/center][/color]
+
+will show the value which p_name refers to.
+
+There will be more special tokens for more advanced features in the future.
+
+[font=res://addons/VNScriptEditor/documentation/title.tres]Structure of a Timeline:[/font]
+
+[color=#000099][b]Dialogs:[/b][/color]
+Core dialogs. Each dialog block should have a name. There has to be one dialog called 'starter'. The system will automatically assign a starter block when you click new timeline. Dialog flows linearly, unless there are choices or branching events that lead the player to another dialog block.
+
+[color=#000099][b]Choices:[/b][/color]
+Each choice block stands for one choice event, during which the player will be asked to make one choice among many options. Each choice can be represented by:
+
+[color=#ff0000][center] choice_text :: * ; condition :: (no condition by default) ;  [/center][/color]
+
+If a condition is given, this option will be shown only if the condition is met. choice_text is the text on the choice button. Here, * refer to a choice action. Nonempty choice actions must be written in JSON format.  There are three types of choice action allowed:
+
+1. A dvar event: e.g. {\"dvar\": \"money = money + 10\"}
+
+2. A then event: e.g. {\"then\": \"target_block_name\"}
+
+3. Empty: e.g. {}
+
+If 1, then the dvar will be set and dialog flows linearly downwards.
+
+If 2, then dialog will switch to the block pointed to by the then event.
+
+If 3, nothing will happen and dialog flows linearly downwards.
+
+For example:
+
+[color=#ff0000][center] Icecream:: {\"dvar\": \"money = money - 10\" } ; [/center][/color]
+
+means there is an option called Icecream and if player chooses this, player's money will drop by 10.
+
+[color=#000099][b]Conditions:[/b][/color]
+
+Here you can create key-value pairs for commonly used conditions. In every timeline there is a unique condition block. The conditions are specific to the timeline. If in your condition block, you have
+[color=#ff0000][center]  c1:: money > 10; [/center][/color]
+Then in your dialog events, you may write 
+[color=#ff0000][center] ... ; condition :: c1;   [/center][/color]
+as a shorthand. 
+
+If your condition is more complicated, say you need \"and\", simply write
+[color=#ff0000][center]c1 :: [money <10000, age > 18] ;  [/center][/color]
+If you need \"or\" relation, simply write
+[color=#ff0000][center] c1 :: [money < 10000, or, age > 18] ; [/center][/color]
+If you need \"and\" and \"or\" in one condition, simply write
+[color=#ff0000][center] c1 :: [money < 10000, or, [age > 18, friend == 0]] ; [/center][/color]
+which translates to \"money<10000\" or (age > 18 and friend == 0).
+
+If you have a dvar that takes boolean value, you can simply write [dvar_identifer] to check for true/false.
+
+As a challenge, you can try to see if this covers all possible combinations of boolean logic.
+
+[color=#ff0000]Important: the system will not understand conditions with ! at the front, like ! (money == 0). It will understand things like money != 0. [/color]
+
+[color=#000099][b]Comments:[/b][/color]
+An entire block of comment. No effect on story. In any other block, you can devote an entire line to a comment, by starting a line with \"#\". However, in-line comments are not supported and will cause problems. 
+
+[font=res://addons/VNScriptEditor/documentation/title.tres]Special Keys and Values:[/font]
+
+[color=#000099][b]1. Location [/b][/color]
+loc :: 1600 720;
+will represent the 2d vector (1600,720). Nothce there is no comma separating the two numbers in the example.  If you put
+loc :: R; or loc :: r; 
+then a random location will be generated. If you put anything else, there will be a bug. In GDscript, you can simply put
+{'loc':Vector2(1600,720), ..}
+
+[color=#000099][b]2. Direction [/b][/color]
+dir :: up;  or dir :: 1 1
+will represent the 2d up vector and the 2d vector (1,1) respectively. The value can be either up, down, left, right or any other two numbers separated by a space. The system will normalize the vector for you. You may put r or R for a random direction.
+
+[color=#000099][b]3. Params [/b][/color]
+params:: 'a' ;  params:: 1;  params:: [1,2,\"c\"];
+A single value, or identifier for a dvar (a string essentially), or an array of numbers, strings, or dvar identifiers. If it is an array, then this must be typed with JSON format.
+
+[color=#000099][b]4. Conditions [/b][/color]
+condition:: [];
+Explained in the condition section.
+
+[color=#000099][b]5. Path [/b][/color]
+path :: /abc.tscn;
+means the path res://abc.tscn"
+text = "A Brief Introduction:
+
+The dialog system is a line-based event system. That means each line is one event and will proceed to the next line if current event is not a branching event. One line corresponds to one line number in the script editor. If you want to break new lines in one sentence, use the special token [nl] for that.
+
+Notice that this is not a programming language, although it is capable of doing some basic automated tasks. Because of this, it is impossible to incorproate everything the system is capable into commands in the script. I like to think of this script system as a script for a play. It contains the meat of the play, but there are extra things that have to be prepared in the backstage. That means you will have to write some GDscript for the extra functionalities.
+
+They system will try to understand the content of each line, but each line must follow a specific syntax to be recognized. Namely:
+
+key1 :: value1; key2 :: value2 ; ... ... key_n :: value_n; 
+
+Each key-value pair is called a field. And one line is called an event. There are optional fields for each event. In this documentation, if you see
+
+ key :: * ;
+
+That means this field is necessary and you will have to supply a valid value to the field. If you see
+
+ key :: (default_val) ;
+
+then it means that this field is optional, and if the field is not given for the event, the default value in the parenthesis will be used.
+
+Moreover, because \"::\" is used to separate keys and values, if you want to use \"::\" in any dialog, you will have to replace it with the special token [dc]. Because \";\" is used to separate fields, you will need to use [sm] if you want to show a semicolon in your dialog. (This paragrah applies when you're writing script using this editor, not directly in GDscript.)
+
+Wring Script Directly in GDscript
+
+If you're writing directly in GDscript, the syntax is similar, but you will have to write out the full dictionary wich represents the event, namely:
+
+{\"key1\": \"val1\" ,...}
+
+and put them in arrays. Notice, the values here do not need to be strings now. Also if the field supports it, you can even put arrays or dictionaries as values. The drawback is that you will have to manually type in all the quatation marks and the curly brackets and timelines in GDscript are not as well-organized as here.
+
+Special Tokens in Dialogs:
+
+Any Godot builtin bbcode.
+[nl]: new line. If you're using GDscript to write events, not this editor, you can also use \"\\n\".
+[dc]: double colon. (Same. No need in GDscript.)
+[sm]: semicolon. (Same. No need in GDscript.)
+[nw]: autoforward to next dialog without delay
+[lb]: the left square bracket \"[\" (Same. No need in GDscript.)
+[rb]: the right square bracket \"]\" (Same. No need in GDscript.)
+[dvar_identifer]: puts the value of the dvar in the text
+For example if you have a dvar called \"p_name\" for player_name, then put
+
+a happy:: So your name is [p_name].;
+
+will show the value which p_name refers to.
+
+There will be more special tokens for more advanced features in the future.
+
+Structure of a Timeline:
+
+Dialogs:
+Core dialogs. Each dialog block should have a name. There has to be one dialog called 'starter'. The system will automatically assign a starter block when you click new timeline. Dialog flows linearly, unless there are choices or branching events that lead the player to another dialog block.
+
+Choices:
+Each choice block stands for one choice event, during which the player will be asked to make one choice among many options. Each choice can be represented by:
+
+ choice_text :: * ; condition :: (no condition by default) ;  
+
+If a condition is given, this option will be shown only if the condition is met. choice_text is the text on the choice button. Here, * refer to a choice action. Nonempty choice actions must be written in JSON format.  There are three types of choice action allowed:
+
+1. A dvar event: e.g. {\"dvar\": \"money = money + 10\"}
+
+2. A then event: e.g. {\"then\": \"target_block_name\"}
+
+3. Empty: e.g. {}
+
+If 1, then the dvar will be set and dialog flows linearly downwards.
+
+If 2, then dialog will switch to the block pointed to by the then event.
+
+If 3, nothing will happen and dialog flows linearly downwards.
+
+For example:
+
+ Icecream:: {\"dvar\": \"money = money - 10\" } ; 
+
+means there is an option called Icecream and if player chooses this, player's money will drop by 10.
+
+Conditions:
+
+Here you can create key-value pairs for commonly used conditions. In every timeline there is a unique condition block. The conditions are specific to the timeline. If in your condition block, you have
+  c1:: money > 10; 
+Then in your dialog events, you may write 
+ ... ; condition :: c1;   
+as a shorthand. 
+
+If your condition is more complicated, say you need \"and\", simply write
+c1 :: [money <10000, age > 18] ;  
+If you need \"or\" relation, simply write
+ c1 :: [money < 10000, or, age > 18] ; 
+If you need \"and\" and \"or\" in one condition, simply write
+ c1 :: [money < 10000, or, [age > 18, friend == 0]] ; 
+which translates to \"money<10000\" or (age > 18 and friend == 0).
+
+If you have a dvar that takes boolean value, you can simply write [dvar_identifer] to check for true/false.
+
+As a challenge, you can try to see if this covers all possible combinations of boolean logic.
+
+Important: the system will not understand conditions with ! at the front, like ! (money == 0). It will understand things like money != 0. 
+
+Comments:
+An entire block of comment. No effect on story. In any other block, you can devote an entire line to a comment, by starting a line with \"#\". However, in-line comments are not supported and will cause problems. 
+
+Special Keys and Values:
+
+1. Location 
+loc :: 1600 720;
+will represent the 2d vector (1600,720). Nothce there is no comma separating the two numbers in the example.  If you put
+loc :: R; or loc :: r; 
+then a random location will be generated. If you put anything else, there will be a bug. In GDscript, you can simply put
+{'loc':Vector2(1600,720), ..}
+
+2. Direction 
+dir :: up;  or dir :: 1 1
+will represent the 2d up vector and the 2d vector (1,1) respectively. The value can be either up, down, left, right or any other two numbers separated by a space. The system will normalize the vector for you. You may put r or R for a random direction.
+
+3. Params 
+params:: 'a' ;  params:: 1;  params:: [1,2,\"c\"];
+A single value, or identifier for a dvar (a string essentially), or an array of numbers, strings, or dvar identifiers. If it is an array, then this must be typed with JSON format.
+
+4. Conditions 
+condition:: [];
+Explained in the condition section.
+
+5. Path 
+path :: /abc.tscn;
+means the path res://abc.tscn"
+selection_enabled = true
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Preview" type="Tabs" parent="."]
+visible = false
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_left = 4.0
+margin_top = 58.0
+margin_right = -4.0
+margin_bottom = -4.0
+
+[node name="bgPreview" type="Button" parent="Preview"]
+margin_left = 4.87483
+margin_top = 3.94426
+margin_right = 233.875
+margin_bottom = 49.9443
+focus_mode = 0
+custom_colors/font_color_hover = Color( 0, 0, 0, 0.54902 )
+text = "Choose a BG"
+flat = true
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="doc" type="TextureRect" parent="Preview"]
+margin_left = 1.0
+margin_top = 56.0
+margin_right = 641.0
+margin_bottom = 737.0
+focus_mode = 2
+expand = true
+stretch_mode = 1
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="FileDialog" type="FileDialog" parent="Preview"]
+margin_right = 637.0
+margin_bottom = 478.0
+window_title = "Open a File"
+dialog_text = "Choose a background picture to preview."
+mode = 0
+filters = PoolStringArray( "*.jpg", "*.png", "*jpeg" )
+current_dir = "res://assets/backgrounds"
+current_path = "res://assets/backgrounds/"
+
+[node name="Chara" type="Tabs" parent="."]
+visible = false
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_left = 4.0
+margin_top = 58.0
+margin_right = -4.0
+margin_bottom = -4.0
+
+[node name="doc" type="RichTextLabel" parent="Chara"]
+margin_left = 2.0
+margin_right = 561.0
+margin_bottom = 706.0
+focus_mode = 2
+custom_fonts/italics_font = ExtResource( 4 )
+custom_fonts/bold_font = ExtResource( 5 )
+custom_fonts/normal_font = ExtResource( 6 )
+bbcode_enabled = true
+bbcode_text = "[font=res://addons/VNScriptEditor/documentation/title.tres]Character Events:[/font]
+
+All characters must have a default expression and character sprites must be named as  uid_expression.jpg/png. Otherwise, you have to manually add the sprites to your character scene. When typing in an expression, if you use empty string then it is understood as using default. But a better way is to simply leave out the expression field.
+
+[b]Available events:[/b]
+
+[color=#ff0000]Note: below * stands for both uid and also indicates the field is necessary for the event.[/color]
+
+[b]chara:: * join; loc:: *; expression :: (default);[/b]
+Character * will join at loc with given expression.
+
+[b]chara:: * fadein; loc :: *; time :: (1);  expression :: (default);[/b]
+Character * will fadein at loc in given time with given expression.
+
+[b]chara:: * leave;[/b]
+Here * can be 'all' to make all character leave the stage. Use 'absolute_all' to remove all characters including those with in_all=False.
+
+[b]chara:: * fadeout; loc:: *; time:: (1);[/b]
+Fadeout character * in given time. Here * can be 'all'.
+
+[b]chara:: * shake; amount:: (250) ; time:: (2);[/b]
+Randomly shake character with given amount for a duration of the given time. Supports 'all'.
+
+[b]chara:: * vpunch;[/b]
+[b]chara:: * hpunch;[/b]
+Vpunch/hpunches the character given default parameters. Supports 'all'.
+
+[b]chara:: * spin; deg:: (360); sdir:: (1) ; time:: (1); type:: (linear);[/b]
+Rotates the character given number of degress in sdir direction in the given time with the given type. Here sdir=1 means clockwise and -1 means counterclockwise. Type supports all Godot movement types plus 'instant'. If type instance, time will be ignored. Supports 'all'.
+
+[b]chara:: * move; loc:: *; time::(1); type:: (linear) ; expression:: (no change by default);[/b]
+Moves the character to location loc in given time with given movement type. If a valid expression is given, changes the expression when moving is done. Otherwise, there will be no expression change.
+
+[b]chara:: * jump; amount:: (80); time:: (0.25); dir:: (up) ;[/b]
+Moves the character in direction dir with amount distance and back. This is done linearly in the given time. Dir can be up, down, left, right, or any other vector or \"R\" or \"r\" for random direction. The system will noramlize the direction for you. The default values will show a jump animation and therefore this event is called jump. Supports 'all'.
+
+[b]chara::* add; at:: *; path:: *;[/b]
+Instances the scene with the given path, and add it as a subnode to the character at the given point. The point has to be a node2d subnode of the character, and the name of the node2d is used as the value for at. This event does not save the added instance. Supports 'all' if the given point exists for each character.
+
+In addition, you may use 
+[b]express:: * expression_name;[/b]
+to change expression.
+
+There are two special character expression that are prebuilt. You do not need the corresponding sprites.
+
+[center]flip and vflip[/center]
+
+You can use them as any other expressions. Flip will flip horizontally, and vflip will flip vertically. This will be reset if the character leaves.
+
+
+[font=res://addons/VNScriptEditor/documentation/title.tres]Character Class:[/font]
+
+[b]Customizable Attributes:[/b]
+
+Display name: the display name of the character.
+Name color: the color for display name.
+In_all: determines whether or not the special uid all applies to this character or not.
+apply_highlight: when not talking, the sprites will be slightly dimmed.
+fade_on_change: creates a fading effect when changing expression, making expression changes look smoother.
+fade_time: the fading time if fade_on_change is on.
+use_character_font: if on, then the given fonts will be applied when this character is talking.
+
+[color=#ff0000]Technically you may change the uid, but this is highly discouraged.[/color]
+
+
+[font=res://addons/VNScriptEditor/documentation/title.tres]Other:[/font]
+
+To be filled in."
+text = "Character Events:
+
+All characters must have a default expression and character sprites must be named as  uid_expression.jpg/png. Otherwise, you have to manually add the sprites to your character scene. When typing in an expression, if you use empty string then it is understood as using default. But a better way is to simply leave out the expression field.
+
+Available events:
+
+Note: below * stands for both uid and also indicates the field is necessary for the event.
+
+chara:: * join; loc:: *; expression :: (default);
+Character * will join at loc with given expression.
+
+chara:: * fadein; loc :: *; time :: (1);  expression :: (default);
+Character * will fadein at loc in given time with given expression.
+
+chara:: * leave;
+Here * can be 'all' to make all character leave the stage. Use 'absolute_all' to remove all characters including those with in_all=False.
+
+chara:: * fadeout; loc:: *; time:: (1);
+Fadeout character * in given time. Here * can be 'all'.
+
+chara:: * shake; amount:: (250) ; time:: (2);
+Randomly shake character with given amount for a duration of the given time. Supports 'all'.
+
+chara:: * vpunch;
+chara:: * hpunch;
+Vpunch/hpunches the character given default parameters. Supports 'all'.
+
+chara:: * spin; deg:: (360); sdir:: (1) ; time:: (1); type:: (linear);
+Rotates the character given number of degress in sdir direction in the given time with the given type. Here sdir=1 means clockwise and -1 means counterclockwise. Type supports all Godot movement types plus 'instant'. If type instance, time will be ignored. Supports 'all'.
+
+chara:: * move; loc:: *; time::(1); type:: (linear) ; expression:: (no change by default);
+Moves the character to location loc in given time with given movement type. If a valid expression is given, changes the expression when moving is done. Otherwise, there will be no expression change.
+
+chara:: * jump; amount:: (80); time:: (0.25); dir:: (up) ;
+Moves the character in direction dir with amount distance and back. This is done linearly in the given time. Dir can be up, down, left, right, or any other vector or \"R\" or \"r\" for random direction. The system will noramlize the direction for you. The default values will show a jump animation and therefore this event is called jump. Supports 'all'.
+
+chara::* add; at:: *; path:: *;
+Instances the scene with the given path, and add it as a subnode to the character at the given point. The point has to be a node2d subnode of the character, and the name of the node2d is used as the value for at. This event does not save the added instance. Supports 'all' if the given point exists for each character.
+
+In addition, you may use 
+express:: * expression_name;
+to change expression.
+
+There are two special character expression that are prebuilt. You do not need the corresponding sprites.
+
+flip and vflip
+
+You can use them as any other expressions. Flip will flip horizontally, and vflip will flip vertically. This will be reset if the character leaves.
+
+
+Character Class:
+
+Customizable Attributes:
+
+Display name: the display name of the character.
+Name color: the color for display name.
+In_all: determines whether or not the special uid all applies to this character or not.
+apply_highlight: when not talking, the sprites will be slightly dimmed.
+fade_on_change: creates a fading effect when changing expression, making expression changes look smoother.
+fade_time: the fading time if fade_on_change is on.
+use_character_font: if on, then the given fonts will be applied when this character is talking.
+
+Technically you may change the uid, but this is highly discouraged.
+
+
+Other:
+
+To be filled in."
+selection_enabled = true
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Camera" type="Tabs" parent="."]
+visible = false
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_left = 4.0
+margin_top = 58.0
+margin_right = -4.0
+margin_bottom = -4.0
+
+[node name="doc" type="RichTextLabel" parent="Camera"]
+margin_left = 2.0
+margin_right = 561.0
+margin_bottom = 706.0
+focus_mode = 2
+custom_fonts/italics_font = ExtResource( 4 )
+custom_fonts/bold_font = ExtResource( 5 )
+custom_fonts/normal_font = ExtResource( 6 )
+bbcode_enabled = true
+bbcode_text = "[font=res://addons/VNScriptEditor/documentation/title.tres]Camera Events:[/font]
+
+Moves, rotates, and zooms the camera. Camera movement and zoom will discontinue skipping. The state of the camera will be saved.
+
+[b]Available events:[/b]
+
+[b]camera:: move; loc:: *; time:: (1); type:: (linear);[/b]
+Moves the top left corner of the camera to loc in given time in the given fashion.
+
+[b]camera:: zoom;  loc:: (0 0); scale:: *; time:: (1); type:: (linear);[/b]
+Zooms the camera to the scale. Scale shoule be two real numbers between 0 and 1 separated by a space. If a loc is given, performs move at the same time. 
+
+[b]camera:: shake; amount:: (250) ; time:: (2);[/b]
+Randomly shakes the camera with given amount for a duration of the given time.
+
+[b]camera:: vpunch;[/b]
+[b]camera:: hpunch;[/b]
+Vpunch/hpunches the camera with default parameters.
+
+[b]camera:: spin; deg:: *; sdir:: (1) ; time:: (1); type:: (linear);[/b]
+Rotates the camera given number of degrees in sdir direction in the given time with the given type. Here sdir=1 means clockwise and -1 means counterclockwise. Type supports all Godot movement types plus 'instant'. If type=instant, time will be ignored.
+
+[b]camera:: ; or camera:: reset;[/b]
+Resets the camera to default.
+
+
+
+"
+text = "Camera Events:
+
+Moves, rotates, and zooms the camera. Camera movement and zoom will discontinue skipping. The state of the camera will be saved.
+
+Available events:
+
+camera:: move; loc:: *; time:: (1); type:: (linear);
+Moves the top left corner of the camera to loc in given time in the given fashion.
+
+camera:: zoom;  loc:: (0 0); scale:: *; time:: (1); type:: (linear);
+Zooms the camera to the scale. Scale shoule be two real numbers between 0 and 1 separated by a space. If a loc is given, performs move at the same time. 
+
+camera:: shake; amount:: (250) ; time:: (2);
+Randomly shakes the camera with given amount for a duration of the given time.
+
+camera:: vpunch;
+camera:: hpunch;
+Vpunch/hpunches the camera with default parameters.
+
+camera:: spin; deg:: *; sdir:: (1) ; time:: (1); type:: (linear);
+Rotates the camera given number of degrees in sdir direction in the given time with the given type. Here sdir=1 means clockwise and -1 means counterclockwise. Type supports all Godot movement types plus 'instant'. If type=instant, time will be ignored.
+
+camera:: ; or camera:: reset;
+Resets the camera to default.
+
+
+
+"
+selection_enabled = true
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Weather" type="Tabs" parent="."]
+visible = false
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_left = 4.0
+margin_top = 58.0
+margin_right = -4.0
+margin_bottom = -4.0
+
+[node name="doc" type="RichTextLabel" parent="Weather"]
+margin_left = 2.0
+margin_right = 561.0
+margin_bottom = 706.0
+focus_mode = 2
+custom_fonts/italics_font = ExtResource( 4 )
+custom_fonts/bold_font = ExtResource( 5 )
+custom_fonts/normal_font = ExtResource( 6 )
+bbcode_enabled = true
+bbcode_text = "[font=res://addons/VNScriptEditor/documentation/title.tres]Weather Events:[/font]
+
+Weather events are lasting particle effects, meaning that they have to be manually turned off and will be saved by the system. If you want to make you own weather or modify current ones, you can go to res://GodetteVN/fundamentals/details/weather/ and add your particle effects here, and then register this effect inside the ScreenEffect singleton. 
+
+[b]Available events:[/b]
+
+weather :: rain;
+
+weather :: snow;
+
+weather :: ;  or weather :: off ;
+will turn off weather. Please do not troll the system by naming a weather effect the empty string. :)
+
+Not so good ones:
+
+weather :: dust;
+
+weather :: light;
+
+
+"
+text = "Weather Events:
+
+Weather events are lasting particle effects, meaning that they have to be manually turned off and will be saved by the system. If you want to make you own weather or modify current ones, you can go to res://GodetteVN/fundamentals/details/weather/ and add your particle effects here, and then register this effect inside the ScreenEffect singleton. 
+
+Available events:
+
+weather :: rain;
+
+weather :: snow;
+
+weather :: ;  or weather :: off ;
+will turn off weather. Please do not troll the system by naming a weather effect the empty string. :)
+
+Not so good ones:
+
+weather :: dust;
+
+weather :: light;
+
+
+"
+selection_enabled = true
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Screen" type="Tabs" parent="."]
+visible = false
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_left = 4.0
+margin_top = 58.0
+margin_right = -4.0
+margin_bottom = -4.0
+
+[node name="doc" type="RichTextLabel" parent="Screen"]
+margin_left = 2.0
+margin_right = 561.0
+margin_bottom = 706.0
+focus_mode = 2
+custom_fonts/italics_font = ExtResource( 4 )
+custom_fonts/bold_font = ExtResource( 5 )
+custom_fonts/normal_font = ExtResource( 6 )
+bbcode_enabled = true
+bbcode_text = "[font=res://addons/VNScriptEditor/documentation/title.tres]Screen Events:[/font]
+
+Screen special effects. There are lasting and temporary screen effects. Lasting means  that they will be saved.
+
+[b]Available events:[/b]
+
+[b]screen:: tint; color:: *; time:: (1);[/b]
+Tints the screen with the given color. For color, you can pass in an html color with # in front, or four real numbers separated by a space. Time refers to the time it takes for the screen to be fully tinted.
+
+[b]screen:: tintwave; color:: *; time:: (1);[/b]
+Same as above, but now it will tint and un-tint the screen with a period of the given time.
+
+[b]screen:: flashlight ;[/b]
+Creates a flashlight.
+
+[b]screen:: ;  or screen :: off ;[/b]
+Deletes all the lasting effects.
+
+The ones below are temporary screen transitions.
+
+[b]screen:: * ; color:: (Color.Black);  time:: (1);[/b]
+Here * can be anything in the list 
+
+['fade','sweep_left','sweep_right','sweep_up','sweep_down', 'curtain_left','curtain_right','pixelate','diagonal']
+
+Plus in/out. Color works for everything except pixelate. For example,
+
+screen:: fade in; color:: Color.Purple;  time:: 1;
+
+will play a purple fade in effect in time 1."
+text = "Screen Events:
+
+Screen special effects. There are lasting and temporary screen effects. Lasting means  that they will be saved.
+
+Available events:
+
+screen:: tint; color:: *; time:: (1);
+Tints the screen with the given color. For color, you can pass in an html color with # in front, or four real numbers separated by a space. Time refers to the time it takes for the screen to be fully tinted.
+
+screen:: tintwave; color:: *; time:: (1);
+Same as above, but now it will tint and un-tint the screen with a period of the given time.
+
+screen:: flashlight ;
+Creates a flashlight.
+
+screen:: ;  or screen :: off ;
+Deletes all the lasting effects.
+
+The ones below are temporary screen transitions.
+
+screen:: * ; color:: (Color.Black);  time:: (1);
+Here * can be anything in the list 
+
+['fade','sweep_left','sweep_right','sweep_up','sweep_down', 'curtain_left','curtain_right','pixelate','diagonal']
+
+Plus in/out. Color works for everything except pixelate. For example,
+
+screen:: fade in; color:: Color.Purple;  time:: 1;
+
+will play a purple fade in effect in time 1."
+selection_enabled = true
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Dvar" type="Tabs" parent="."]
+visible = false
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_left = 4.0
+margin_top = 58.0
+margin_right = -4.0
+margin_bottom = -4.0
+
+[node name="doc" type="RichTextLabel" parent="Dvar"]
+margin_left = 2.0
+margin_right = 561.0
+margin_bottom = 706.0
+focus_mode = 2
+custom_fonts/italics_font = ExtResource( 4 )
+custom_fonts/bold_font = ExtResource( 5 )
+custom_fonts/normal_font = ExtResource( 6 )
+bbcode_enabled = true
+bbcode_text = "[font=res://addons/VNScriptEditor/documentation/title.tres]Dvar Events:[/font]
+
+Dvar, or Dialog Variables, are variables that can interact with the dialog directly. Technically, they are not variables, but let's keep it simple here. You must initialize your dvar in CharacterManager.gd's dvar_declaration function. After that, you may use them directly in dialogs if you put them in square brackets. You can use them in your conditions and modifiy them either by code or by using a dvar event like the one below. To access dvars via code, you can do vn.dvar['dvar_identifier']. Because they're not really variables, there are some limitations on how you can modify them. 
+
+[b]Available events:[/b]
+
+[b] dvar :: money = value ;;[/b]
+Will set the dvar \"money\" to value. You can put numbers as values or strings. If it can be parsed into numbers, then it will be understood as numbers.
+
+[b] dvar :: money = some_algebraic_expression_involving_dvars_and_constants ;[/b]
+For example,
+dvar :: money = money*2 + 5 - debt;
+Using algebraic expression only works when the dvars involved have numerical values. 
+
+[color=#ff0000]Important:  you cannot add string dvars together. If your dvar is initialized to be a string, then it will ignore the algebraic expressions and set the value to the RHS of the equal sign. I am too lazy to add string manipulations. For boolean dvars, b = !b doesn't work either. If say you have a dvar called name, which is initialized to a string,, and your dvar event is dvar:: name = 10 + 20; Then the value of the dvar name will be set to the string \"10+20\".[/color]
+
+If you're really curious, you should think about how any programming language handles inputs like algebraic expressions, which are essentially all strings, and how does the system understands in which order to perform them. This is a highly nontrivial task, althought people have figured it out and is something at the very backend.
+
+[color=#ff0000]
+These limitations only apply when you're accessing dvars with dvar events in script, however. If you're accessing dvars directly with code, there is no limitation on what operations you can do as long as the operations are legal in GDscript.
+[/color]"
+text = "Dvar Events:
+
+Dvar, or Dialog Variables, are variables that can interact with the dialog directly. Technically, they are not variables, but let's keep it simple here. You must initialize your dvar in CharacterManager.gd's dvar_declaration function. After that, you may use them directly in dialogs if you put them in square brackets. You can use them in your conditions and modifiy them either by code or by using a dvar event like the one below. To access dvars via code, you can do vn.dvar['dvar_identifier']. Because they're not really variables, there are some limitations on how you can modify them. 
+
+Available events:
+
+ dvar :: money = value ;;
+Will set the dvar \"money\" to value. You can put numbers as values or strings. If it can be parsed into numbers, then it will be understood as numbers.
+
+ dvar :: money = some_algebraic_expression_involving_dvars_and_constants ;
+For example,
+dvar :: money = money*2 + 5 - debt;
+Using algebraic expression only works when the dvars involved have numerical values. 
+
+Important:  you cannot add string dvars together. If your dvar is initialized to be a string, then it will ignore the algebraic expressions and set the value to the RHS of the equal sign. I am too lazy to add string manipulations. For boolean dvars, b = !b doesn't work either. If say you have a dvar called name, which is initialized to a string,, and your dvar event is dvar:: name = 10 + 20; Then the value of the dvar name will be set to the string \"10+20\".
+
+If you're really curious, you should think about how any programming language handles inputs like algebraic expressions, which are essentially all strings, and how does the system understands in which order to perform them. This is a highly nontrivial task, althought people have figured it out and is something at the very backend.
+
+
+These limitations only apply when you're accessing dvars with dvar events in script, however. If you're accessing dvars directly with code, there is no limitation on what operations you can do as long as the operations are legal in GDscript.
+"
+selection_enabled = true
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Bg" type="Tabs" parent="."]
+visible = false
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_left = 4.0
+margin_top = 58.0
+margin_right = -4.0
+margin_bottom = -4.0
+
+[node name="doc" type="RichTextLabel" parent="Bg"]
+margin_left = 2.0
+margin_right = 561.0
+margin_bottom = 706.0
+focus_mode = 2
+custom_fonts/italics_font = ExtResource( 4 )
+custom_fonts/bold_font = ExtResource( 5 )
+custom_fonts/normal_font = ExtResource( 6 )
+bbcode_enabled = true
+bbcode_text = "[font=res://addons/VNScriptEditor/documentation/title.tres]Bg Events:[/font]
+
+Changes the background picture. You can may your custom transition effect with grayscale images. This process is more involved but won't take more than 5 minutes if you already have the grayscale image ready.
+
+[b]Available events:[/b]
+
+[b]bg:: *; name_of_transition :: (1); color :: (Color.Black);[/b]
+Changes the background and plays the given transition effect in the given time with the given color. name_of_transition field is optional and can be either one of the below
+
+['fade','sweep_left','sweep_right','sweep_up','sweep_down', 'curtain_left','curtain_right','pixelate','diagonal']
+
+The entire transition will take the given time. That means half of the given time is the in transition and the other half is the out transition. Color doesn't apply to pixelate.
+
+Please place all background images in the assets/backgrounds folder. Here you do not need to provide the full path, only the name of the picture file and its extension."
+text = "Bg Events:
+
+Changes the background picture. You can may your custom transition effect with grayscale images. This process is more involved but won't take more than 5 minutes if you already have the grayscale image ready.
+
+Available events:
+
+bg:: *; name_of_transition :: (1); color :: (Color.Black);
+Changes the background and plays the given transition effect in the given time with the given color. name_of_transition field is optional and can be either one of the below
+
+['fade','sweep_left','sweep_right','sweep_up','sweep_down', 'curtain_left','curtain_right','pixelate','diagonal']
+
+The entire transition will take the given time. That means half of the given time is the in transition and the other half is the out transition. Color doesn't apply to pixelate.
+
+Please place all background images in the assets/backgrounds folder. Here you do not need to provide the full path, only the name of the picture file and its extension."
+selection_enabled = true
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Audio" type="Tabs" parent="."]
+visible = false
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_left = 4.0
+margin_top = 58.0
+margin_right = -4.0
+margin_bottom = -4.0
+
+[node name="doc" type="RichTextLabel" parent="Audio"]
+margin_left = 2.0
+margin_right = 561.0
+margin_bottom = 706.0
+focus_mode = 2
+custom_fonts/italics_font = ExtResource( 4 )
+custom_fonts/bold_font = ExtResource( 5 )
+custom_fonts/normal_font = ExtResource( 6 )
+bbcode_enabled = true
+bbcode_text = "[font=res://addons/VNScriptEditor/documentation/title.tres]Audio Events:[/font]
+
+Bgm, audio, and voice are all audio events. 
+
+[b]Available events:[/b]
+
+[b]audio:: * ; vol:: (0) ;[/b]
+Plays the given speicial effect sound and adjusts its volume by vol. The audio file has to be placed in the audio folder. 
+
+[b]bgm:: * ; fadein:: (1) ; vol:: (0) ;[/b]
+Fades in the given bgm in the given time and adjusts its volume by vol. The bgm file must be placed in the bgm folder. 
+
+[b]bgm:: ; fadeout:: (1) ;[/b]
+If fadeout is given, fades out the bgm in the given time. Otherwise, stops bgm.
+
+Example of a voiced dialog:
+
+[center][b]a happy:: Today is my birthday ; voice :: c1.wav ;[/b][/center]
+
+Here the character has uid a, showing expression happy, and the voice file c1.wav will be played as the dialog unfolds. The voice file must be placed in the voice folder.
+
+You can also use 
+
+[b] voice :: file.wav ; [/b]
+
+to play a voice line without a dialog. Notice, such voice lines will not be replayable in the history menu. Also, currently you cannot adjust the volume of the voice file.
+
+
+
+"
+text = "Audio Events:
+
+Bgm, audio, and voice are all audio events. 
+
+Available events:
+
+audio:: * ; vol:: (0) ;
+Plays the given speicial effect sound and adjusts its volume by vol. The audio file has to be placed in the audio folder. 
+
+bgm:: * ; fadein:: (1) ; vol:: (0) ;
+Fades in the given bgm in the given time and adjusts its volume by vol. The bgm file must be placed in the bgm folder. 
+
+bgm:: ; fadeout:: (1) ;
+If fadeout is given, fades out the bgm in the given time. Otherwise, stops bgm.
+
+Example of a voiced dialog:
+
+a happy:: Today is my birthday ; voice :: c1.wav ;
+
+Here the character has uid a, showing expression happy, and the voice file c1.wav will be played as the dialog unfolds. The voice file must be placed in the voice folder.
+
+You can also use 
+
+ voice :: file.wav ; 
+
+to play a voice line without a dialog. Notice, such voice lines will not be replayable in the history menu. Also, currently you cannot adjust the volume of the voice file.
+
+
+
+"
+selection_enabled = true
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="History" type="Tabs" parent="."]
+visible = false
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_left = 4.0
+margin_top = 58.0
+margin_right = -4.0
+margin_bottom = -4.0
+
+[node name="doc" type="RichTextLabel" parent="History"]
+margin_left = 2.0
+margin_right = 561.0
+margin_bottom = 706.0
+focus_mode = 2
+custom_fonts/italics_font = ExtResource( 4 )
+custom_fonts/bold_font = ExtResource( 5 )
+custom_fonts/normal_font = ExtResource( 6 )
+bbcode_enabled = true
+bbcode_text = "[font=res://addons/VNScriptEditor/documentation/title.tres]History Events:[/font]
+
+Allows the manipulation of history records.
+
+[color=#ff0000]History manipulation DOES NOT work will rollback![/color]
+
+[b]Available events:[/b]
+
+[b] history:: pop ; [/b]
+Removes the last entry in history.
+
+[b] history:: history ; uid:: text; [/b]
+Pushes a hidden message to history. Here, uid refers to the uid of the intended speaker, and text is the text.
+
+"
+text = "History Events:
+
+Allows the manipulation of history records.
+
+History manipulation DOES NOT work will rollback!
+
+Available events:
+
+ history:: pop ; 
+Removes the last entry in history.
+
+ history:: history ; uid:: text; 
+Pushes a hidden message to history. Here, uid refers to the uid of the intended speaker, and text is the text.
+
+"
+selection_enabled = true
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="System" type="Tabs" parent="."]
+visible = false
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_left = 4.0
+margin_top = 58.0
+margin_right = -4.0
+margin_bottom = -4.0
+
+[node name="doc" type="RichTextLabel" parent="System"]
+margin_left = 2.0
+margin_right = 561.0
+margin_bottom = 706.0
+focus_mode = 2
+custom_fonts/italics_font = ExtResource( 4 )
+custom_fonts/bold_font = ExtResource( 5 )
+custom_fonts/normal_font = ExtResource( 6 )
+bbcode_enabled = true
+bbcode_text = "[font=res://addons/VNScriptEditor/documentation/title.tres]System Events:[/font]
+
+System events are mostly used for pace controls and player interaction controls. By default in this framework, right click means hide VNUI and show only the sprites and background. Mouse wheel up-scroll means show history. Control+z means to rollback. 
+
+System events are of the form system :: ; OR sys :: ;
+
+[b]Available events:[/b]
+
+[b]system:: auto off ;[/b]
+Turns auto forward off if the player is in auto mode.
+
+[b]system:: skip off ;[/b]
+Turns skip off if the player is skipping. Note: choice, camera movement events, and GD scene changes will force skipping to stop by default.
+
+[b]system:: clear;[/b]
+Clears the content of dialog box. For nvl box, use nvl:: clear;
+
+[b]system:: rollback clear_n ;[/b]
+Clears n records in the rollback stack. You can change the max number of allowed rollback in GlobalSettings.gd. You can also clear the entire rollback stack by system:: rollback clear ;
+
+rollback, roll_back, RB are interchangeable.
+
+[b]system:: auto_save ;[/b]
+Automatically makes a save. AS and auto_save are interchangeable.
+
+[b]system:: make_save;[/b]
+Shows a popup which asks if the player wants to make a save. MS and make_save are interchangeable.
+
+-------The ones below belong to the group \"all\".---------
+
+[b]system:: right_click on/off ;[/b]
+Enables or disables the function of right click, which is to hide the VNUI. RC and right_click are interchangeable.
+
+[b]system:: quick_menu on/off ;[/b]
+Shows or hides the quick menu. QM and quickmenu are interchangeable.
+
+[b]system:: boxes on/off ;[/b]
+Shows or hides dialog and name boxes.
+
+[b]system:: scroll on/off ;[/b]
+Enables or disables the functionality of mouse wheel up-scroll, which is to show history menu. 
+
+[b]system:: allon/off ;[/b]
+Turns on or off the controls that belong to the group all.
+
+
+
+"
+text = "System Events:
+
+System events are mostly used for pace controls and player interaction controls. By default in this framework, right click means hide VNUI and show only the sprites and background. Mouse wheel up-scroll means show history. Control+z means to rollback. 
+
+System events are of the form system :: ; OR sys :: ;
+
+Available events:
+
+system:: auto off ;
+Turns auto forward off if the player is in auto mode.
+
+system:: skip off ;
+Turns skip off if the player is skipping. Note: choice, camera movement events, and GD scene changes will force skipping to stop by default.
+
+system:: clear;
+Clears the content of dialog box. For nvl box, use nvl:: clear;
+
+system:: rollback clear_n ;
+Clears n records in the rollback stack. You can change the max number of allowed rollback in GlobalSettings.gd. You can also clear the entire rollback stack by system:: rollback clear ;
+
+rollback, roll_back, RB are interchangeable.
+
+system:: auto_save ;
+Automatically makes a save. AS and auto_save are interchangeable.
+
+system:: make_save;
+Shows a popup which asks if the player wants to make a save. MS and make_save are interchangeable.
+
+-------The ones below belong to the group \"all\".---------
+
+system:: right_click on/off ;
+Enables or disables the function of right click, which is to hide the VNUI. RC and right_click are interchangeable.
+
+system:: quick_menu on/off ;
+Shows or hides the quick menu. QM and quickmenu are interchangeable.
+
+system:: boxes on/off ;
+Shows or hides dialog and name boxes.
+
+system:: scroll on/off ;
+Enables or disables the functionality of mouse wheel up-scroll, which is to show history menu. 
+
+system:: allon/off ;
+Turns on or off the controls that belong to the group all.
+
+
+
+"
+selection_enabled = true
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Other" type="Tabs" parent="."]
+visible = false
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_left = 4.0
+margin_top = 58.0
+margin_right = -4.0
+margin_bottom = -4.0
+
+[node name="doc" type="RichTextLabel" parent="Other"]
+margin_left = 2.0
+margin_right = 561.0
+margin_bottom = 706.0
+focus_mode = 2
+custom_fonts/italics_font = ExtResource( 4 )
+custom_fonts/bold_font = ExtResource( 5 )
+custom_fonts/normal_font = ExtResource( 6 )
+bbcode_enabled = true
+bbcode_text = "[font=res://addons/VNScriptEditor/documentation/title.tres]Other Events:[/font]
+
+[b]Available events:[/b]
+
+[b]sfx:: /path/to/ur/scene.tscn; anim:: (none_by_default) ; loc:: (none_by_default) ; params:: (none_by_default) ;[/b]
+Instances the scene at the given path as a subnode of your general dialog node. The is usually intended for some temporary special effects, but can also be extended to other functionalities like timed choices.
+
+anim:: name_of_animation ;
+
+If the instanced scene has an AnimationPlayer subnode with default name, then the given animation will be played.
+
+loc :: 100 100;
+
+If the instanced scene is a sprite, or has a position attribute, then the scene will be instanced and placed at that location. In this example, the instanced scene will be placed at (100,100). Notice, not every scene has a position attribute.
+
+params:: single value / JSON formatted array data.
+
+If the instanced scene has a variable called params, then the value here will be passed to the params.
+
+[b]GDscene:: /path/to/ur/scene.tscn;[/b]
+Changes current Godot scene to the one given. Used for changing between chapters. Will disrupt skip and reset all rollback events, meaning that if you use this to change scene, then rollback records will be reinitialized. 
+
+In addition, you can use 
+
+GDscene:: free;
+
+to free current scene and nothing else will happen.
+
+[b]then :: target_block_name ; else:: (optional) ; condition :: some_condition ;[/b]
+If condition is true, changes to target block, and otherwise goes to the block in else field. Always starts at index 0 in the new block.
+
+[b]id :: your_id ; [/b]
+No effect. Only used when you want to jump to this line in the block from somewhere else. See below. It is recommended you use integer for ids.
+
+[b]then :: target_block_name ; target id :: target_id  ;[/b]
+Jumps to target block and start from one event after the id event.
+
+[b].......; condition :: your_condition ; [/b]
+You may attach condition field to any event and the event will be played only if the condition is met.
+
+[b] premade:: name_of_premade; [/b]
+If you have an event which you know you will use 1 million times in your story, then make it into a premade event! Go to GlobalFunctions.gd, and find premade_events dictionary. Give it a key, and put the event as the value. Say the key (name of the premade event) is a1, then you can simply write 
+
+premade :: a1 ;
+
+for the event. Premade events can only be made in GDscript for now.
+
+[b]extend :: ; [/b]
+
+[b]float :: ;  [/b]
+
+[b]side:: image.jpg; [/b]
+Shows a side image. Side image must be placed in assets/sideImages folder. You can adjust the position of side images in ScreenEffects singleton. Only one side image can be shown at one time and there is NO correspondence between character expressions and side images. 
+
+[b]nvl:: true; [/b]
+Turns on nvl mode, and use false to turn it off. ( on / off also works) 
+
+[b]nvl:: clear; [/b]
+Clears all text in nvl box. 
+
+[b]center:: ur_text ; who:: (narrator) ; voice:: (none) ; speed:: (fast) ; font:: (none, /path/to/ur/font.tres) ; [/b]
+Shows the text at the center of the screen. The name of the speaker will not be shown even if you specify a who. The who field will put the speaker's name in the history. Speed determines the cps of the center text.
+
+{fast:50, slow:25, instant:0, slower:10}
+
+[b]call :: function_name; params :: (none) ; [/b]
+Calls the function with the given name in the root node. The function has to be present in the script in the root node of this VN scene. (the node that extends generalDialog.) You can pass an array of params, and if you do so then this must match the arguments in the function. The system does not save your custom effects invoked by these functions."
+text = "Other Events:
+
+Available events:
+
+sfx:: /path/to/ur/scene.tscn; anim:: (none_by_default) ; loc:: (none_by_default) ; params:: (none_by_default) ;
+Instances the scene at the given path as a subnode of your general dialog node. The is usually intended for some temporary special effects, but can also be extended to other functionalities like timed choices.
+
+anim:: name_of_animation ;
+
+If the instanced scene has an AnimationPlayer subnode with default name, then the given animation will be played.
+
+loc :: 100 100;
+
+If the instanced scene is a sprite, or has a position attribute, then the scene will be instanced and placed at that location. In this example, the instanced scene will be placed at (100,100). Notice, not every scene has a position attribute.
+
+params:: single value / JSON formatted array data.
+
+If the instanced scene has a variable called params, then the value here will be passed to the params.
+
+GDscene:: /path/to/ur/scene.tscn;
+Changes current Godot scene to the one given. Used for changing between chapters. Will disrupt skip and reset all rollback events, meaning that if you use this to change scene, then rollback records will be reinitialized. 
+
+In addition, you can use 
+
+GDscene:: free;
+
+to free current scene and nothing else will happen.
+
+then :: target_block_name ; else:: (optional) ; condition :: some_condition ;
+If condition is true, changes to target block, and otherwise goes to the block in else field. Always starts at index 0 in the new block.
+
+id :: your_id ; 
+No effect. Only used when you want to jump to this line in the block from somewhere else. See below. It is recommended you use integer for ids.
+
+then :: target_block_name ; target id :: target_id  ;
+Jumps to target block and start from one event after the id event.
+
+.......; condition :: your_condition ; 
+You may attach condition field to any event and the event will be played only if the condition is met.
+
+ premade:: name_of_premade; 
+If you have an event which you know you will use 1 million times in your story, then make it into a premade event! Go to GlobalFunctions.gd, and find premade_events dictionary. Give it a key, and put the event as the value. Say the key (name of the premade event) is a1, then you can simply write 
+
+premade :: a1 ;
+
+for the event. Premade events can only be made in GDscript for now.
+
+extend :: ; 
+
+float :: ;  
+
+side:: image.jpg; 
+Shows a side image. Side image must be placed in assets/sideImages folder. You can adjust the position of side images in ScreenEffects singleton. Only one side image can be shown at one time and there is NO correspondence between character expressions and side images. 
+
+nvl:: true; 
+Turns on nvl mode, and use false to turn it off. ( on / off also works) 
+
+nvl:: clear; 
+Clears all text in nvl box. 
+
+center:: ur_text ; who:: (narrator) ; voice:: (none) ; speed:: (fast) ; font:: (none, /path/to/ur/font.tres) ; 
+Shows the text at the center of the screen. The name of the speaker will not be shown even if you specify a who. The who field will put the speaker's name in the history. Speed determines the cps of the center text.
+
+{fast:50, slow:25, instant:0, slower:10}
+
+call :: function_name; params :: (none) ; 
+Calls the function with the given name in the root node. The function has to be present in the script in the root node of this VN scene. (the node that extends generalDialog.) You can pass an array of params, and if you do so then this must match the arguments in the function. The system does not save your custom effects invoked by these functions."
+selection_enabled = true
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[connection signal="resized" from="." to="." method="_on_documentation_resized"]
+[connection signal="tab_selected" from="." to="." method="_on_documentation_tab_selected"]
+[connection signal="pressed" from="Preview/bgPreview" to="." method="_on_bgPreview_pressed"]
+[connection signal="file_selected" from="Preview/FileDialog" to="." method="_on_FileDialog_file_selected"]

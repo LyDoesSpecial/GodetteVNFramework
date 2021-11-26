@@ -1,0 +1,28 @@
+[gd_scene load_steps=2 format=2]
+
+[ext_resource path="res://fonts/DEFAULT_NORMAL.tres" type="DynamicFont" id=1]
+
+[node name="nameBox" type="ColorRect"]
+margin_left = 412.752
+margin_top = 769.963
+margin_right = 562.752
+margin_bottom = 809.963
+rect_min_size = Vector2( 150, 40 )
+color = Color( 1, 1, 1, 0.627451 )
+__meta__ = {
+"_edit_group_": true,
+"_edit_use_anchors_": false
+}
+
+[node name="speaker" type="RichTextLabel" parent="."]
+margin_left = 7.0
+margin_top = -1.0
+margin_right = 141.0
+margin_bottom = 38.0
+custom_colors/default_color = Color( 0, 0, 0, 1 )
+custom_fonts/normal_font = ExtResource( 1 )
+bbcode_enabled = true
+scroll_active = false
+__meta__ = {
+"_edit_use_anchors_": false
+}

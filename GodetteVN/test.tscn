@@ -1,0 +1,35 @@
+[gd_scene load_steps=4 format=2]
+
+[ext_resource path="res://fonts/ArchitectsDaughter.ttf" type="DynamicFontData" id=1]
+[ext_resource path="res://GodetteVN/test.gd" type="Script" id=2]
+
+[sub_resource type="DynamicFont" id=1]
+size = 50
+font_data = ExtResource( 1 )
+
+[node name="text" type="RichTextLabel"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_left = 422.0
+margin_top = 251.0
+margin_right = -228.0
+margin_bottom = -244.0
+custom_fonts/normal_font = SubResource( 1 )
+bbcode_enabled = true
+bbcode_text = "
+
+
+[url=1%E33A15][color=#ffffff]R   [/color][/url][url=2%ffa500][color=#ffffff]A   [/color][/url][url=3%ffff00][color=#ffffff]I   [/color][/url][url=4%3AEE05][color=#ffffff]N   [/color][/url][url=5%00ffff][color=#ffffff]B   [/color][/url][url=6%0000ff][color=#ffffff]O   [/color][/url][url=7%800080][color=#ffffff]W   [/color][/url]"
+meta_underlined = false
+text = "
+
+
+R   A   I   N   B   O   W   "
+script = ExtResource( 2 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[connection signal="meta_clicked" from="." to="." method="_on_Node2D_meta_clicked"]
+[connection signal="meta_hover_ended" from="." to="." method="_on_Node2D_meta_hover_ended"]
+[connection signal="meta_hover_started" from="." to="." method="_on_Node2D_meta_hover_started"]

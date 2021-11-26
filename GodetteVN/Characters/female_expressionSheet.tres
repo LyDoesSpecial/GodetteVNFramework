@@ -1,0 +1,41 @@
+[gd_resource type="SpriteFrames" load_steps=7 format=2]
+
+[ext_resource path="res://assets/actors/female_smile1.png" type="Texture" id=1]
+[ext_resource path="res://assets/actors/female_default.png" type="Texture" id=2]
+[ext_resource path="res://assets/actors/female_smile2.png" type="Texture" id=3]
+[ext_resource path="res://assets/actors/female_worried.png" type="Texture" id=4]
+[ext_resource path="res://assets/actors/female_surprised.png" type="Texture" id=5]
+[ext_resource path="res://assets/actors/female_wink.png" type="Texture" id=6]
+
+[resource]
+animations = [ {
+"frames": [ ExtResource( 2 ) ],
+"loop": false,
+"name": "default",
+"speed": 5.0
+}, {
+"frames": [ ExtResource( 3 ) ],
+"loop": false,
+"name": "smile2",
+"speed": 5.0
+}, {
+"frames": [ ExtResource( 5 ) ],
+"loop": false,
+"name": "surprised",
+"speed": 5.0
+}, {
+"frames": [ ExtResource( 6 ) ],
+"loop": false,
+"name": "wink",
+"speed": 5.0
+}, {
+"frames": [ ExtResource( 4 ) ],
+"loop": false,
+"name": "worried",
+"speed": 5.0
+}, {
+"frames": [ ExtResource( 1 ) ],
+"loop": false,
+"name": "smile1",
+"speed": 5.0
+} ]

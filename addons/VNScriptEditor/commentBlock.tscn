@@ -1,0 +1,22 @@
+[gd_scene load_steps=2 format=2]
+
+[ext_resource path="res://addons/VNScriptEditor/dialogBlock.tscn" type="PackedScene" id=1]
+
+[node name="commentBlock" instance=ExtResource( 1 )]
+margin_bottom = 360.0
+rect_min_size = Vector2( 1000, 305 )
+
+[node name="whatBlock" parent="header" index="1"]
+margin_right = 162.0
+text = "Comment:"
+
+[node name="blockName" parent="header" index="2"]
+visible = false
+
+[node name="MarginContainer" parent="." index="2"]
+margin_bottom = 308.0
+rect_min_size = Vector2( 1000, 250 )
+
+[node name="TextEdit" parent="MarginContainer" index="0"]
+margin_bottom = 240.0
+script = null

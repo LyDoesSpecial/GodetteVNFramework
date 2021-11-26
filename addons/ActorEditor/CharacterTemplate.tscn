@@ -1,0 +1,7 @@
+[gd_scene load_steps=2 format=2]
+
+[ext_resource path="res://addons/ActorEditor/CharacterTemplate.gd" type="Script" id=1]
+
+[node name="character" type="AnimatedSprite"]
+modulate = Color( 0.862745, 0.862745, 0.862745, 1 )
+script = ExtResource( 1 )

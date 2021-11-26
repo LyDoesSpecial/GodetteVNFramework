@@ -1,0 +1,17 @@
+[gd_scene load_steps=3 format=2]
+
+[ext_resource path="res://GodetteVN/Characters/test2_expressionSheet.tres" type="SpriteFrames" id=1]
+[ext_resource path="res://addons/ActorEditor/CharacterTemplate.gd" type="Script" id=2]
+
+[node name="test2" type="AnimatedSprite"]
+modulate = Color( 0.862745, 0.862745, 0.862745, 1 )
+frames = ExtResource( 1 )
+script = ExtResource( 2 )
+display_name = "Chara B"
+unique_id = "test2"
+name_color = Color( 0.0470588, 0.0745098, 0.717647, 1 )
+fade_on_change = true
+use_character_font = true
+normal_font = "res://fonts/ROBOTO_NORMAL.tres"
+bold_font = "res://fonts/ROBOTO_BOLD.tres"
+italics_font = "res://fonts/ROBOTO_ITALICS.tres"

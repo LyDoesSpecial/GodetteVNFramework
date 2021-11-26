@@ -1,0 +1,54 @@
+[gd_scene load_steps=9 format=2]
+
+[ext_resource path="res://GodetteVN/Core/ChoiceBar/choiceBar.gd" type="Script" id=1]
+[ext_resource path="res://fonts/DEFAULT_NORMAL.tres" type="DynamicFont" id=2]
+[ext_resource path="res://fonts/DEFAULT_ITALICS.tres" type="DynamicFont" id=3]
+[ext_resource path="res://fonts/DEFAULT_BOLD.tres" type="DynamicFont" id=4]
+
+[sub_resource type="Gradient" id=1]
+colors = PoolColorArray( 0.0625, 0.0625, 0.0625, 1, 1, 1, 1, 1 )
+
+[sub_resource type="GradientTexture" id=2]
+gradient = SubResource( 1 )
+
+[sub_resource type="Gradient" id=3]
+colors = PoolColorArray( 0.418945, 0.418945, 0.418945, 1, 1, 1, 1, 1 )
+
+[sub_resource type="GradientTexture" id=4]
+gradient = SubResource( 3 )
+
+[node name="choiceBar" type="TextureButton"]
+margin_right = 340.0
+margin_bottom = 50.0
+rect_min_size = Vector2( 340, 50 )
+size_flags_horizontal = 4
+texture_normal = SubResource( 2 )
+texture_hover = SubResource( 4 )
+expand = true
+script = ExtResource( 1 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="text" type="RichTextLabel" parent="."]
+margin_left = 17.0
+margin_top = 3.0
+margin_right = 328.0
+margin_bottom = 52.0
+rect_min_size = Vector2( 230, 0 )
+mouse_filter = 2
+size_flags_horizontal = 5
+size_flags_vertical = 5
+custom_colors/default_color = Color( 0, 0, 0, 1 )
+custom_fonts/italics_font = ExtResource( 3 )
+custom_fonts/bold_font = ExtResource( 4 )
+custom_fonts/normal_font = ExtResource( 2 )
+bbcode_enabled = true
+bbcode_text = "[center]Default Choice Text[/center]"
+text = "Default Choice Text"
+scroll_active = false
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[connection signal="pressed" from="." to="." method="_on_choiceBar_pressed"]

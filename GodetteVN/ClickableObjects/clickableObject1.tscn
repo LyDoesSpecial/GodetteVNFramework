@@ -1,0 +1,19 @@
+[gd_scene load_steps=3 format=2]
+
+[ext_resource path="res://assets/other/penguin.png" type="Texture" id=2]
+[ext_resource path="res://GodetteVN/ClickableObjects/clickableObject1.gd" type="Script" id=3]
+
+[node name="object1" type="TextureButton"]
+margin_left = 1060.0
+margin_top = 184.0
+margin_right = 1260.0
+margin_bottom = 422.0
+texture_normal = ExtResource( 2 )
+script = ExtResource( 3 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+change_to_on_click = "obj1"
+
+[connection signal="mouse_entered" from="." to="." method="_on_object1_mouse_entered"]
+[connection signal="mouse_exited" from="." to="." method="_on_object1_mouse_exited"]

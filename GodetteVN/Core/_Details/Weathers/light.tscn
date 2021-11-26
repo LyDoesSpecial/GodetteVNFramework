@@ -1,0 +1,10 @@
+[gd_scene load_steps=2 format=2]
+
+[ext_resource path="res://assets/special_effects/light.png" type="Texture" id=1]
+
+[node name="light" type="Light2D"]
+light_mask = 2
+position = Vector2( 946.793, -61.614 )
+texture = ExtResource( 1 )
+texture_scale = 4.75
+energy = 0.75

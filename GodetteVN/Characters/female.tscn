@@ -1,0 +1,16 @@
+[gd_scene load_steps=3 format=2]
+
+[ext_resource path="res://GodetteVN/Characters/female_expressionSheet.tres" type="SpriteFrames" id=1]
+[ext_resource path="res://addons/ActorEditor/CharacterTemplate.gd" type="Script" id=2]
+
+[node name="female" type="AnimatedSprite"]
+modulate = Color( 0.862745, 0.862745, 0.862745, 1 )
+frames = ExtResource( 1 )
+script = ExtResource( 2 )
+display_name = "A"
+unique_id = "female"
+name_color = Color( 0.737255, 0.419608, 0.835294, 1 )
+fade_on_change = true
+
+[node name="_head" type="Node2D" parent="."]
+position = Vector2( 106, -328 )

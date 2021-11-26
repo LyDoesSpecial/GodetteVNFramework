@@ -1,0 +1,290 @@
+[gd_scene load_steps=12 format=2]
+
+[ext_resource path="res://addons/VNScriptEditor/ubuntuRedOutlined.tres" type="Theme" id=1]
+[ext_resource path="res://fonts/ubuntu.tres" type="DynamicFont" id=2]
+[ext_resource path="res://addons/VNScriptEditor/editorBlockContainer.tscn" type="PackedScene" id=3]
+[ext_resource path="res://addons/VNScriptEditor/scriptEditorMain.gd" type="Script" id=4]
+[ext_resource path="res://fonts/Ubuntu-Regular.ttf" type="DynamicFontData" id=5]
+[ext_resource path="res://addons/EditorGUI/PackedScene.png" type="Texture" id=6]
+[ext_resource path="res://addons/EditorGUI/GodotDocs.png" type="Texture" id=7]
+[ext_resource path="res://addons/EditorGUI/AddSingleTile.png" type="Texture" id=8]
+[ext_resource path="res://addons/VNScriptEditor/ubuntuRegularTheme.tres" type="Theme" id=9]
+[ext_resource path="res://addons/VNScriptEditor/documentation/documentation.tscn" type="PackedScene" id=10]
+
+[sub_resource type="DynamicFont" id=1]
+size = 24
+font_data = ExtResource( 5 )
+
+[node name="editor" type="MarginContainer"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_top = -1.0
+margin_right = -520.0
+margin_bottom = -1.0
+size_flags_vertical = 3
+theme = ExtResource( 1 )
+custom_constants/margin_right = 10
+custom_constants/margin_top = 10
+custom_constants/margin_left = 10
+custom_constants/margin_bottom = 10
+script = ExtResource( 4 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="hbox" type="HBoxContainer" parent="."]
+margin_left = 10.0
+margin_top = 10.0
+margin_right = 1390.0
+margin_bottom = 1070.0
+custom_constants/separation = 30
+
+[node name="vbox" type="VBoxContainer" parent="hbox"]
+margin_right = 1380.0
+margin_bottom = 1060.0
+size_flags_horizontal = 3
+theme = ExtResource( 1 )
+custom_constants/separation = 25
+
+[node name="headLayers" type="VBoxContainer" parent="hbox/vbox"]
+margin_right = 1380.0
+margin_bottom = 98.0
+custom_constants/separation = 20
+
+[node name="head" type="HBoxContainer" parent="hbox/vbox/headLayers"]
+margin_right = 1380.0
+margin_bottom = 39.0
+custom_constants/separation = 30
+
+[node name="tlLabel" type="Label" parent="hbox/vbox/headLayers/head"]
+margin_top = 3.0
+margin_right = 215.0
+margin_bottom = 36.0
+custom_fonts/font = ExtResource( 2 )
+text = "Timeline name:"
+align = 1
+valign = 1
+uppercase = true
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="tlname" type="LineEdit" parent="hbox/vbox/headLayers/head"]
+margin_left = 245.0
+margin_right = 385.0
+margin_bottom = 39.0
+rect_min_size = Vector2( 140, 38 )
+custom_fonts/font = SubResource( 1 )
+max_length = 50
+expand_to_text_length = true
+caret_blink = true
+caret_blink_speed = 0.5
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="newNBButton" type="Button" parent="hbox/vbox/headLayers/head"]
+margin_left = 415.0
+margin_right = 766.0
+margin_bottom = 39.0
+focus_mode = 0
+custom_fonts/font = ExtResource( 2 )
+custom_colors/font_color_hover = Color( 0, 0, 0, 0.54902 )
+text = "New Timeline(Notebook)"
+icon = ExtResource( 6 )
+flat = true
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="manual" type="Button" parent="hbox/vbox/headLayers/head"]
+margin_left = 1103.0
+margin_right = 1380.0
+margin_bottom = 39.0
+size_flags_horizontal = 10
+custom_fonts/font = ExtResource( 2 )
+custom_colors/font_color_hover = Color( 0, 0, 0, 0.54902 )
+text = "USER MANUAL(NA)"
+icon = ExtResource( 7 )
+flat = true
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="buttons" type="HBoxContainer" parent="hbox/vbox/headLayers"]
+margin_top = 59.0
+margin_right = 1380.0
+margin_bottom = 98.0
+custom_constants/separation = 50
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="newDialogButton" type="Button" parent="hbox/vbox/headLayers/buttons"]
+margin_right = 177.0
+margin_bottom = 39.0
+focus_mode = 0
+custom_fonts/font = ExtResource( 2 )
+custom_colors/font_color_hover = Color( 0, 0, 0, 0.54902 )
+text = "New Dialog"
+icon = ExtResource( 8 )
+flat = true
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="newChoiceButton" type="Button" parent="hbox/vbox/headLayers/buttons"]
+margin_left = 227.0
+margin_right = 407.0
+margin_bottom = 39.0
+focus_mode = 0
+custom_fonts/font = ExtResource( 2 )
+custom_colors/font_color_hover = Color( 0, 0, 0, 0.54902 )
+text = "New Choice"
+icon = ExtResource( 8 )
+flat = true
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="newCommentButton" type="Button" parent="hbox/vbox/headLayers/buttons"]
+margin_left = 457.0
+margin_right = 676.0
+margin_bottom = 39.0
+focus_mode = 0
+custom_fonts/font = ExtResource( 2 )
+custom_colors/font_color_hover = Color( 0, 0, 0, 0.54902 )
+text = "New Comment"
+icon = ExtResource( 8 )
+flat = true
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="saveButton" type="Button" parent="hbox/vbox/headLayers/buttons"]
+margin_left = 763.0
+margin_right = 910.0
+margin_bottom = 39.0
+focus_mode = 0
+size_flags_horizontal = 10
+custom_fonts/font = ExtResource( 2 )
+custom_colors/font_color_hover = Color( 0, 0, 0, 0.54902 )
+text = "Save as txt"
+flat = true
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="loadButton" type="Button" parent="hbox/vbox/headLayers/buttons"]
+margin_left = 1070.0
+margin_right = 1145.0
+margin_bottom = 39.0
+focus_mode = 0
+size_flags_horizontal = 10
+custom_fonts/font = ExtResource( 2 )
+custom_colors/font_color_hover = Color( 0, 0, 0, 0.54902 )
+text = "Load"
+flat = true
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="jsonButton" type="Button" parent="hbox/vbox/headLayers/buttons"]
+margin_left = 1258.0
+margin_right = 1380.0
+margin_bottom = 39.0
+focus_mode = 0
+size_flags_horizontal = 10
+custom_fonts/font = ExtResource( 2 )
+custom_colors/font_color_hover = Color( 0, 0, 0, 0.54902 )
+text = "To JSON"
+flat = true
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="separationLine" type="ColorRect" parent="hbox/vbox"]
+margin_top = 123.0
+margin_right = 1380.0
+margin_bottom = 127.0
+rect_min_size = Vector2( 0, 4 )
+color = Color( 0.266667, 0.266667, 0.266667, 1 )
+
+[node name="hsplit" type="HSplitContainer" parent="hbox/vbox"]
+margin_top = 152.0
+margin_right = 1380.0
+margin_bottom = 1060.0
+size_flags_vertical = 3
+custom_constants/separation = 15
+
+[node name="notebook" parent="hbox/vbox/hsplit" instance=ExtResource( 3 )]
+anchor_right = 0.0
+anchor_bottom = 0.0
+margin_right = 1020.0
+margin_bottom = 908.0
+rect_min_size = Vector2( 1020, 500 )
+size_flags_vertical = 3
+
+[node name="documentation" parent="hbox/vbox/hsplit" instance=ExtResource( 10 )]
+margin_right = 1380.0
+
+[node name="AcceptDialog" type="AcceptDialog" parent="."]
+margin_left = 10.0
+margin_top = 10.0
+margin_right = 610.0
+margin_bottom = 410.0
+rect_min_size = Vector2( 600, 400 )
+size_flags_horizontal = 0
+size_flags_vertical = 0
+theme = ExtResource( 9 )
+window_title = ""
+dialog_text = "
+To Json success! You can find it in the VNScript folder."
+dialog_autowrap = true
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="FileDialog" type="FileDialog" parent="."]
+margin_left = 10.0
+margin_top = 10.0
+margin_right = 1010.0
+margin_bottom = 610.0
+rect_min_size = Vector2( 1000, 600 )
+input_pass_on_modal_close_click = false
+size_flags_horizontal = 0
+size_flags_vertical = 0
+theme = ExtResource( 9 )
+popup_exclusive = true
+window_title = "Open a File"
+mode = 0
+filters = PoolStringArray( "*.txt" )
+current_dir = "res://VNScript"
+current_path = "res://VNScript/"
+
+[node name="helperPopup" type="AcceptDialog" parent="."]
+margin_left = 10.0
+margin_top = 10.0
+margin_right = 610.0
+margin_bottom = 410.0
+rect_min_size = Vector2( 600, 400 )
+size_flags_horizontal = 0
+size_flags_vertical = 0
+theme = ExtResource( 9 )
+window_title = ""
+
+[node name="richText" type="RichTextLabel" parent="helperPopup"]
+margin_left = 8.0
+margin_top = 8.0
+margin_right = 592.0
+margin_bottom = 348.0
+bbcode_enabled = true
+
+[connection signal="pressed" from="hbox/vbox/headLayers/head/newNBButton" to="." method="_on_newNBButton_pressed"]
+[connection signal="pressed" from="hbox/vbox/headLayers/buttons/newDialogButton" to="." method="_on_newDialogButton_pressed"]
+[connection signal="pressed" from="hbox/vbox/headLayers/buttons/newChoiceButton" to="." method="_on_newChoiceButton_pressed"]
+[connection signal="pressed" from="hbox/vbox/headLayers/buttons/newCommentButton" to="." method="_on_newCommentButton_pressed"]
+[connection signal="pressed" from="hbox/vbox/headLayers/buttons/saveButton" to="." method="_on_saveButton_pressed"]
+[connection signal="pressed" from="hbox/vbox/headLayers/buttons/loadButton" to="." method="_on_loadButton_pressed"]
+[connection signal="pressed" from="hbox/vbox/headLayers/buttons/jsonButton" to="." method="_on_jsonButton_pressed"]
+[connection signal="file_selected" from="FileDialog" to="." method="_on_FileDialog_file_selected"]
