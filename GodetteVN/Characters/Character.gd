@@ -31,14 +31,14 @@ func change_expression(e : String, in_fadein:bool=false) -> bool:
 	if e == "": e = 'default'
 	if in_fadein: self.modulate.a = 0
 	var expFrames = self.get_sprite_frames()
-	if expFrames.has_animation(e) or e == "flip" or e == "flipv":
+	if expFrames.has_animation(e) or e in ["flip", "flipv"]:
 		var prev_exp = current_expression
-		if e == "flip" or e == "flipv":
-			if e == "flip": self.flip_h = !self.flip_h
-			elif e == "flipv": self.flip_v = !self.flip_v
-		else:
-			play(e)
-		current_expression = e
+		match e:
+			"flip": self.flip_h = !self.flip_h
+			"flipv": self.flip_v = !self.flip_v
+			_:
+				current_expression = e
+				play(e)
 		if in_fadein == false and _fading == false: # during fading, no dummy fadeout
 			_dummy_fadeout(expFrames, prev_exp)
 		return true
@@ -87,10 +87,8 @@ func fadein(time : float, expression:String=""):
 	
 func fadeout(time : float):
 	var expFrames = self.get_sprite_frames()
-	var expr = current_expression
-	if current_expression in ["flip","flipv"]:
-		expr = "default"
-	vn.Utils.after_image(self.position, self.scale, self.modulate, self.flip_h, self.flip_v, self.rotation_degrees, expFrames.get_frame(expr,0), time, self)
+	vn.Utils.after_image(self.position, self.scale, self.modulate, self.flip_h, self.flip_v, self.rotation_degrees,\
+		 expFrames.get_frame(current_expression,0), time, self)
 	
 func spin(sdir:int,deg:float,t:float,type:String="linear"):
 	if sdir > 0: 
@@ -108,9 +106,6 @@ func spin(sdir:int,deg:float,t:float,type:String="linear"):
 
 func _dummy_fadeout(expFrames, prev_exp:String):
 	if fade_on_change and prev_exp != "":
-		if prev_exp in ["flip","flipv"]:
-			prev_exp = current_expression
-			
 		vn.Utils.after_image(self.position, self.scale, self.modulate, self.flip_h, self.flip_v, self.rotation_degrees, expFrames.get_frame(prev_exp,0), fade_time)
 
 

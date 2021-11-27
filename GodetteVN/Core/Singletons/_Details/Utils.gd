@@ -1,8 +1,6 @@
 extends Node
 
-# A collection of functions that are used repeatedly globally
-
-
+# A collection of utility functions
 
 #-------------------------------------------------------------------------
 # Premade event sections:
@@ -22,7 +20,7 @@ func call_premade_events(key:String) -> Dictionary:
 	if premade_events.has(key):
 		return premade_events[key]
 	else:
-		vn.error("Premade event cannot be found. Check spelling.")
+		push_error("!!! Premade event cannot be found. Check spelling.")
 		return {}
 
 # End of premade events section
@@ -51,10 +49,16 @@ func movement_type(type:String)-> int:
 func random_vec(x:Vector2, y:Vector2):
 	var rng = RandomNumberGenerator.new()
 	rng.randomize()
-	var rndv = Vector2(rng.randf_range(x.x, x.y),rng.randf_range(y.x, y.y))
-	rng.call_deferred('free')
-	return rndv
+	return Vector2(rng.randf_range(x.x, x.y),rng.randf_range(y.x, y.y))
 	
+func random_int(lower:int, upper:int):
+	var rng = RandomNumberGenerator.new()
+	rng.randomize()
+	return rng.randi_range(lower, upper)
+	
+func randval_from_list(list:Array):
+	return list[random_int(0,list.size()-1)]
+
 func calculate(what:String):
 	# what means what to calculate, should be an algebraic expression
 	# only dvars are allowed
@@ -109,19 +113,15 @@ func create_thumbnail(width = vn.THUMBNAIL_WIDTH, height = vn.THUMBNAIL_HEIGHT):
 		
 # Need to Refactor
 func make_a_save(msg = "[Quick Save] " , delay:float = 0.0, offset_by:int = 0):
-	delay = abs(delay)
-	if delay > 0:
-		yield(get_tree().create_timer(delay), 'timeout')
-		
+	yield(get_tree().create_timer(max(0.05, delay)), 'timeout')
 	create_thumbnail() # delay is mostly used to control the timing of the thumbnail
 
-	var sl = vn.Pre.SAVE_SLOT.instance() # bad. See below
 	var temp = vn.Pgs.currentSaveDesc
 	var curId = vn.Pgs.currentIndex
 	vn.Pgs.currentIndex = vn.Pgs.currentIndex - offset_by
 	vn.Pgs.currentSaveDesc = msg + temp
-	sl.make_save(sl.path)# Because in reality we do not need to instance a save slot object. Only the data
-	sl.queue_free()
+	var path = vn.SAVE_DIR + 'save' + str(OS.get_system_time_msecs()) + '.dat'
+	write_to_save(path, gather_save_data())
 	vn.Pgs.currentSaveDesc = temp
 	vn.Pgs.currentIndex = curId
 	
@@ -147,36 +147,35 @@ func gather_save_data():
 	'dvar':vn.dvar, 'rollback':vn.Pgs.rollback_records, 'chara_pointer':vn.Chs.chara_pointer,
 	'name_patches':vn.Chs.chara_name_patch, 'control_state':vn.Pgs.control_state}
 	
+	# Need to gather non VN data if there is.
+	# Not implemented yet.
+	
 	return data
 
 func latest_thumbnail():
-	
 	var dir = Directory.new()
 	if !dir.dir_exists(vn.THUMBNAIL_DIR):
-		# then go by default
+		dir.make_dir_recursive(vn.THUMBNAIL_DIR)
 		return "res://gui/default_save_thumbnail.png"
 
 	# so directory already exists
 	dir.open(vn.THUMBNAIL_DIR)
 	dir.list_dir_begin()
-	
-	while true:
-		var file_name = dir.get_next()
-		if file_name == "":
-			break
-		elif not file_name.begins_with("."):
+	var file_name = "1"
+	while file_name != "":
+		file_name = dir.get_next()
+		if file_name[0] != ".":
 			if file_name == 'thumbnail.dat':
 				var file = File.new()
 				var error = file.open(vn.THUMBNAIL_DIR + file_name, File.READ)
 				if error == OK:
-					return file.get_var()
+					dir.list_dir_end()
+					var v = file.get_var()
+					file.close()
+					return v
 				else: # file won't open because of some error
+					dir.list_dir_end()
 					return "res://gui/default_save_thumbnail.png"
-			else:
-				return "res://gui/default_save_thumbnail.png"
-		
-	dir.list_dir_end()
-	return
 
 func write_to_save(path:String, data:Dictionary):
 	var file = File.new()
@@ -205,9 +204,8 @@ func MarkUp(words:String):
 				inner += words[i]
 				i += 1
 				if i >= leng:
-					vn.error("Please do not use square brackets " +\
+					push_error("Please do not use square brackets " +\
 					"unless for bbcode or display dvar purposes.")
-					
 			if vn.dvar.has(inner):
 				output += str(vn.dvar[inner])
 			else:
@@ -220,9 +218,7 @@ func MarkUp(words:String):
 					_: output += '[' + inner + ']'
 		else:
 			output += c
-			
 		i += 1
-	
 	return output
 	
 #---------------------------------------------------------------------
@@ -248,9 +244,7 @@ func read(s, json:bool=false):
 		return s
 
 #---------------------------------------------------------------------
-# Used if you only want your scale/zoom parameters to be between 0 and 1.
-# Notice sometimes for scale, you want to allow bigger scale. (This is not
-# recommended however, because this might destroy the image)
+# Used if you only want your parameters to be between 0 and 1.
 func correct_scale(v:Vector2) -> Vector2:
 	return Vector2(min(1,abs(v.x)), min(1,abs(v.y)))
 	

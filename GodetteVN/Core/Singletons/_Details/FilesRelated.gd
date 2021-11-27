@@ -10,25 +10,21 @@ func _ready():
 	load_config()
 #------------------------------------------------------------------------------
 func get_save_files():
-	
 	var files = []
 	var dir = Directory.new()
 	if !dir.dir_exists(vn.SAVE_DIR):
-			dir.make_dir_recursive(vn.SAVE_DIR)
+		dir.make_dir_recursive(vn.SAVE_DIR)
 	
 	dir.open(vn.SAVE_DIR)
 	dir.list_dir_begin()
-	
-	while true:
-		var file = dir.get_next()
-		if file == "":
-			break
-		elif not file.begins_with("."):
+	var file = "1"
+	while file != "":
+		file = dir.get_next()
+		if file[0] != ".":
 			if file.get_extension() == 'dat':
 				files.append(file)
 				
 	dir.list_dir_end()
-	dir.call_deferred('free')
 	return files
 
 func data2Thumbnail(img_data:PoolByteArray) -> ImageTexture:
@@ -86,12 +82,10 @@ func get_chara_sprites(uid, which = "sprite"):
 	
 	dir.open(which)
 	dir.list_dir_begin()
-	
-	while true:
-		var pic = dir.get_next()
-		if pic == "":
-			break
-		elif not pic.begins_with("."):
+	var pic = "1"
+	while pic != "":
+		pic = dir.get_next()
+		if pic[0] != ".":
 			var temp = pic.split(".")
 			var ext = temp[temp.size()-1]
 			if ext in image_exts:
@@ -113,12 +107,10 @@ func get_backgrounds():
 	
 	dir.open(vn.BG_DIR)
 	dir.list_dir_begin()
-	
-	while true:
-		var pic = dir.get_next()
-		if pic == "":
-			break
-		elif not pic.begins_with("."):
+	var pic = "1"
+	while pic != "":
+		pic = dir.get_next()
+		if pic[0] != ".":
 			var temp = pic.split(".")
 			var ext = temp[temp.size()-1]
 			if ext in image_exts:

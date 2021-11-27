@@ -71,8 +71,8 @@ onready var Pgs = get_node_or_null("Progress")
 onready var Pre = get_node_or_null("Pre")
 var Scene = null
 #
-# ------------------------ Predefined paths ------------------------------
-# Predefined paths, should be constants
+# ------------------------ Paths ------------------------------
+# Paths, should be constants
 const title_screen_path:String = "/GodetteVN/titleScreen.tscn"
 const start_scene_path:String = '/GodetteVN/typicalVNScene.tscn'
 const credit_scene_path:String = "" # if you have one

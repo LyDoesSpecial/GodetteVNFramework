@@ -12,8 +12,7 @@ func _on_saveSlot_pressed():
 			vn.Notifs.show("override")
 			var override_choice = vn.Notifs.get_current_notif()
 			override_choice.connect("decision", self, "override_save")
-		else:
-			# self.path == ""
+		else: # self.path == ""
 			make_save(self.path)
 			emit_signal("save_made")
 	
@@ -22,9 +21,8 @@ func _on_saveSlot_pressed():
 			var success = vn.Files.readSave(self)
 			if success:
 				emit_signal('load_ready')
-			else:
-				# warning, save loading failed
-				vn.error('Loading failed. (Unknown reason.)')
+			else: # warning, save loading failed
+				push_error('Loading failed.')
 
 
 #---------------------Functionalities Related to Save--------------------------
@@ -35,7 +33,6 @@ func override_save(yes: bool):
 
 
 func make_save(save_path): # called when an empty save is clicked
-
 	var data = vn.Utils.gather_save_data()
 	_setup(data)
 	var dir = Directory.new()
@@ -46,7 +43,7 @@ func make_save(save_path): # called when an empty save is clicked
 		save_path = vn.SAVE_DIR + 'save' + str(OS.get_system_time_msecs()) + '.dat'
 		self.path = save_path
 	
-	vn.Utils.write_to_save(save_path, data)	
+	vn.Utils.write_to_save(save_path, data)
 
 
 func set_description(text):
@@ -55,7 +52,7 @@ func set_description(text):
 func set_datetime(dt):
 	get_node("HBoxContainer/VBoxContainer/saveTime").text = dt
 
-# used when loading save files in the save/load screen
+# used when instancing save slots in the save/load screen
 func setup_for_scene(data:Dictionary, m:int, p:String):
 	self.mode = m
 	self.path = p

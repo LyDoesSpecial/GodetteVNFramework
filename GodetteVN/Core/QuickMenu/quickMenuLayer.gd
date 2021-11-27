@@ -63,12 +63,12 @@ func reset_auto_skip():
 
 func disable_skip_auto():
 	reset_auto_skip()
-	get_node("autoButton").disabled = true
-	get_node("skipButton").disabled = true
+	$autoButton.disabled = true
+	$skipButton.disabled = true
 	
 func enable_skip_auto():
-	get_node("autoButton").disabled = false
-	get_node("skipButton").disabled = false
+	$autoButton.disabled = false
+	$skipButton.disabled = false
 
 
 func _on_QsaveButton_pressed():
