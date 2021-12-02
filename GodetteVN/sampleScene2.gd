@@ -23,7 +23,7 @@ var main_block = [
 	{"bg": "condo.jpg", 'sweep_down':2, 'color':Color.pink},
 	{'female':'Hello, hello, is it time for me to show up?'},
 	{'chara': "female fadein", "loc": "1600 600",'time':0.5},
-	# {'chara':'female hpunch', 'time':3, 'amount':300},
+	{'chara':'female move', 'time':3, 'loc': Vector2(500,600),'expression':'wink'},
 	{'extend': 'This is an extend statement~', 'speed':'slower'},
 	{'wait':1},
 	{'ext':'As you can see, extend works for anything in between.'},

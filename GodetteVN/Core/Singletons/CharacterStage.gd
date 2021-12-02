@@ -172,10 +172,18 @@ func get_chara_pos(uid:String)->Vector2:
 func all_on_stage():
 	var output = []
 	for n in $characters.get_children():
-		var temp = {n.unique_id: n.current_expression, 'loc': n.loc, 'fliph':n.flip_h,'flipv':n.flip_v}
+		var temp = {"uid":n.unique_id, "expression":n.current_expression, \
+		'loc': n.loc, 'fliph':n.flip_h,'flipv':n.flip_v}
 		output.append(temp)
 			
 	return output
+	
+func set_flip(uid:String, fliph:bool=false, flipv:bool=false):
+	var c = find_chara_on_stage(uid)
+	if c:
+		c.flip_h = fliph
+		c.flip_v = flipv
+	
 	
 func clean_up():
 	remove_chara("absolute_all")

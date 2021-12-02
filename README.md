@@ -4,14 +4,27 @@
 
 ## Goal and Vision: Bringing the theatrical experience into your story, right in the Godot Engine.
 
-### Keypoints: (subject to change...)
+### Highlights: (subject to change...)
 
 1. Actor Editor: any 2d customization doable in Godot should be applicable to actors. (In progress...)
 2. Script Editor: script should be similar to that of a play in the traditional setting, but formatted in a more programmatic language. (In progress...)
 3. Rich template libraries for "commonly" used components, e.g. timed choices, parallax, weather, etc. (In progress...) 
 4. Key components should be callable programmatically and should be functional without others. (Not started yet...)
 5. Strong unit testing support, instantenous display for the event in your script. (Not started yet...)
+6. Light Weight (Godot engine + the framework is < 100mb.). Not including export templates, which is only needed when exporting the game. 
+7. Much easier to code any other game outside of VNs.
+8. UI interface for UI editing.
 
+### Dehightlights: (Not necessarily...)
+1. Well, overly flashy effects will be left to the user, unless very commonly used.
+2. You probably need to learn shaders and more stuff to do make image effects.
+3. You will have to learn Godot along the way if you want to step outside Visual Novels in your game.
+
+### Future Plans:
+
+1. Side Picture correspondence. (Already has everything needed. Just need to create an interface.)
+2. Simplify the whole process.
+3. More builtin templates. (Like a customizable phone screen template, liteDialogNode, etc.)
 
 -------------------------------------------------------------------------------------------------------------
 
@@ -65,17 +78,6 @@ More in the making ~
 ### Documentations
 
 Documentation will be in the VNScript editor in the framework.
-
-
-------------------------------------------------------------------------------------------------------------------------------
-
-### Future Plans:
-
-1. Side Picture correspondence. (Already has everything needed. Just need to create an interface.)
-
-2. Simplify the whole process.
-
-3. More builtin templates. (Like a customizable phone screen template, liteDialogNode, etc.)
 
 ------------------------------------------------------------------------------------------------------------------------------
 

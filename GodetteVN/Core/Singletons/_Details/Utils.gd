@@ -1,7 +1,7 @@
 extends Node
 
 # A collection of utility functions
-
+var rng = RandomNumberGenerator.new()
 #-------------------------------------------------------------------------
 # Premade event sections:
 # What are premade events? If you have an event like
@@ -46,13 +46,15 @@ func movement_type(type:String)-> int:
 	return m
 
 #----------------------------------------------------------------
-func random_vec(x:Vector2, y:Vector2):
-	var rng = RandomNumberGenerator.new()
+
+func random_num(lower:float, upper:float):
 	rng.randomize()
-	return Vector2(rng.randf_range(x.x, x.y),rng.randf_range(y.x, y.y))
+	return rng.randf_range(lower, upper)
+
+func random_vec(x:Vector2, y:Vector2):
+	return Vector2(random_num(x.x,x.y),random_num(y.x,y.y))
 	
 func random_int(lower:int, upper:int):
-	var rng = RandomNumberGenerator.new()
 	rng.randomize()
 	return rng.randi_range(lower, upper)
 	

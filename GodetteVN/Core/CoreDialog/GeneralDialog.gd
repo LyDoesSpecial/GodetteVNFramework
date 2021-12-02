@@ -92,8 +92,6 @@ func _input(ev):
 			if vn.auto_on or vn.skipping:
 				if not vn.noMouse:
 					QM.reset_auto_skip()
-				else:
-					return
 			else:
 				if not vn.noMouse and not vn.inNotif and not vn.inSetting:
 					check_dialog()
@@ -569,11 +567,11 @@ func change_scene_to(path : String):
 		music.stop_bgm()
 	if path == "free":
 		music.stop_bgm()
-		self.queue_free()
+		queue_free()
 	else:
 		var error = get_tree().change_scene(vn.ROOT_DIR + path)
 		if error == OK:
-			self.queue_free()
+			queue_free()
 
 #------------------------------ Related to Dvar --------------------------------
 func set_dvar(ev : Dictionary) -> void:
@@ -1134,25 +1132,16 @@ func load_playback(play_back, RBM = false): # Roll Back Mode
 	
 	var onStageCharas = []
 	for d in play_back['charas']:
-		var dkeys = d.keys()
-		var loc = d['loc']
-		var fliph = d['fliph']
-		var flipv = d['flipv']
-		dkeys.erase('loc')
-		dkeys.erase('fliph')
-		dkeys.erase('flipv')
-		var uid = dkeys[0]
 		if RBM:
-			onStageCharas.push_back(uid)
-			if stage.is_on_stage(uid):
-				stage.change_pos(uid, _parse_loc(loc))
-				stage.change_expression(uid, d[uid])
+			onStageCharas.push_back(d['uid'])
+			if stage.is_on_stage(d['uid']):
+				stage.change_pos(d['uid'], _parse_loc(d['loc']))
+				stage.change_expression(d['uid'], d['expression'])
 			else:
-				stage.join(uid,loc,d[uid])
+				stage.join(d['uid'],d['loc'],d['expression'])
 		else:
-			stage.join(uid,loc,d[uid])
-		if fliph: stage.change_expression(uid,'flip')
-		if flipv: stage.change_expression(uid,'flipv')
+			stage.join(d['uid'],d['loc'],d['expression'])
+		stage.set_flip(d['uid'],d['fliph'],d['flipv'])
 	
 	if RBM: stage.remove_on_rollback(onStageCharas)
 	
@@ -1534,7 +1523,8 @@ func _dialog_state_reset():
 		nvlBox.nw = false
 	else:
 		dialogbox.nw = false
-		
+
+# Move this to somewhere else? 
 func _notification(what):
 	if what == MainLoop.NOTIFICATION_WM_QUIT_REQUEST:
 		vn.Notifs.show("quit")
