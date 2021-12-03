@@ -109,22 +109,31 @@ func _dummy_fadeout(expFrames, prev_exp:String):
 	if fade_on_change and prev_exp != "":
 		vn.Utils.after_image(self.position, self.scale, self.modulate, self.flip_h, self.flip_v, self.rotation_degrees, expFrames.get_frame(prev_exp,0), fade_time)
 
-
+# Don't ask why this code looks awkward. Ask what Godot does when multiple
+# tweens are changing the same property.
 func change_pos_2(loca:Vector2, time:float, type:String="linear", expr:String=''):
 	self.loc = loca
 	var m = vn.Utils.movement_type(type)
-	var fake = RemoteTransform2D.new()
-	fake.remote_path = get_path()
+	var fake = FakeWalker.new()
 	fake.name = "_dummy"
 	fake.position = position
-	fake.update_rotation = false
-	fake.update_scale = false
 	stage.add_child(fake)
-	var fake_tween = OneShotTween.new(self,"change_expression",[expr])
-	fake_tween.connect("tween_all_completed",fake,"queue_free")
+	var fake_tween
+	if expr == '':
+		fake_tween = OneShotTween.new(fake,"queue_free",[])
+	else:
+		fake_tween = OneShotTween.new(self,"change_expression",[expr])
+		fake_tween.connnect("tween_all_completed", fake, "queue_free")
 	fake.add_child(fake_tween)
 	fake_tween.interpolate_property(fake,"position",position,loca,time,m,Tween.EASE_IN_OUT)
+	var _objTimer = ObjectTimer.new(self,time,0.01,"_follow_fake",[fake])
+	add_child(_objTimer)
 	fake_tween.start()
+
+func _follow_fake(params):
+	var fake = params[0]
+	if is_instance_valid(fake):
+		position += fake.get_disp()
 
 	
 func is_fading():

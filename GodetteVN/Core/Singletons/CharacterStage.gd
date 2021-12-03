@@ -2,47 +2,41 @@ extends Node2D
 
 const direction = {'up': Vector2.UP, 'down': Vector2.DOWN, 'left': Vector2.LEFT, 'right': Vector2.RIGHT}
 
-
-
 # A duplicate method only for convenience.
 func get_character_info(uid:String):
 	if vn.Chs.all_chara.has(uid):
 		return vn.Chs.all_chara[uid]
 	else:
-		vn.error("No character with this uid {0} is found".format({0:uid}))
+		push_error("No character with this uid {0} is found".format({0:uid}))
 
 func set_sideImage(sc:Vector2 = Vector2(1,1), pos:Vector2 = Vector2(-35,530)):
 	$other/sideImage.scale = sc
 	$other/sideImage.position = pos
 
-
 func shake(uid : String, amount:float = 250, time:float = 2, mode:int = 0):
 	if uid == 'all':
 		for n in $characters.get_children():
-			if n.in_all: 
+			if n is Character and n.in_all: 
 				n.shake(amount, time, mode)
 	else:
-		var c = find_chara_on_stage(uid)
-		c.shake(amount, time, mode)
+		find_chara_on_stage(uid).shake(amount, time, mode)
 
 
 func jump(uid:String, dir:Vector2=Vector2.UP, amount:float = 80, time:float = 0.1):
 	if uid == 'all':
 		for n in $characters.get_children():
-			if n.in_all:
+			if n is Character and n.in_all:
 				n.jump(dir, amount, time)
 	else:
-		var c = find_chara_on_stage(uid)
-		c.jump(dir, amount, time)
+		find_chara_on_stage(uid).jump(dir, amount, time)
 		
 func spin(uid:String, degrees:float = 360.0, time:float = 1.0, sdir:int = 1, type:String="linear"):
 	if uid == 'all':
 		for n in $characters.get_children():
-			if n.in_all:
+			if n is Character and n.in_all:
 				n.spin(sdir,degrees, time, type)
 	else:
-		var c = find_chara_on_stage(uid)
-		c.spin(sdir,degrees,time, type)
+		find_chara_on_stage(uid).spin(sdir,degrees,time,type)
 
 func change_pos(uid:String, loc:Vector2, expr:String=''): # instant position change.
 	var c = find_chara_on_stage(uid)
@@ -52,14 +46,12 @@ func change_pos(uid:String, loc:Vector2, expr:String=''): # instant position cha
 		c.change_expression(expr)
 
 func change_pos_2(uid:String, loca:Vector2, time:float = 1, type:String= "linear", expr:String=''):
-	var c = find_chara_on_stage(uid)
-	c.change_pos_2(loca, time, type, expr)
+	find_chara_on_stage(uid).change_pos_2(loca, time, type, expr)
 	
 func change_expression(uid:String, expression:String):
 	var info = vn.Chs.all_chara[uid]
 	if info.has('path'):
-		var c = find_chara_on_stage(uid)
-		c.change_expression(expression)
+		var _err = find_chara_on_stage(uid).change_expression(expression)
 
 func fadein(uid: String, time: float, location: Vector2, expression:String) -> void:
 	# Ignore accidental spriteless character fadein
@@ -74,7 +66,6 @@ func fadein(uid: String, time: float, location: Vector2, expression:String) -> v
 				c.modulate = vn.DIM
 			else:
 				c.modulate = Color(1,1,1,1)
-			
 			c.modulate.a = 0
 			c.loc = location
 			c.position = location
@@ -84,11 +75,10 @@ func fadein(uid: String, time: float, location: Vector2, expression:String) -> v
 func fadeout(uid: String, time: float) -> void:
 	if uid == 'all':
 		for n in $characters.get_children():
-			if n.in_all:
+			if n is Character and n.in_all:
 				n.fadeout(time)
 	else:
-		var c = find_chara_on_stage(uid)
-		c.fadeout(time)
+		find_chara_on_stage(uid).fadeout(time)
 
 func join(uid: String, loc: Vector2, expression:String="default"):
 	var info = vn.Chs.all_chara[uid]
@@ -120,13 +110,13 @@ func set_highlight(uid : String) -> void:
 	var info = vn.Chs.all_chara[uid]
 	if info.has('path'):
 		for n in $characters.get_children():
-			if n.unique_id == uid and n.apply_highlight and not n.is_fading():
+			if n is Character and n.unique_id == uid and n.apply_highlight and not n.is_fading():
 				n.modulate = Color(1,1,1,1)
 				break
 
 func remove_highlight() -> void:
 	for n in $characters.get_children():
-		if n.apply_highlight:
+		if n is Character and n.apply_highlight:
 			n.modulate = vn.DIM
 
 func remove_chara(uid : String):
@@ -139,38 +129,34 @@ func remove_chara(uid : String):
 			if n.in_all:
 				n.call_deferred("free")
 	else:
-		var c = find_chara_on_stage(uid)
-		c.call_deferred("free")
+		find_chara_on_stage(uid).call_deferred("free")
 
 
 func set_modulate_4_all(c : Color):
 	for n in $characters.get_children():
-		if n.apply_highlight:
+		if n is Character and n.apply_highlight:
 			n.modulate = c
 
-func find_chara_on_stage(uid:String):
+func find_chara_on_stage(uid:String)->Character:
 	for n in $characters.get_children():
-		if n.unique_id == uid:
+		if n is Character and n.unique_id == uid:
 			return n
 			
 	print('Warning: the character with uid {0} cannot be found or has not joined the stage.'.format({0:uid}))
 	print("Depending on your event, you will get a bug or nothing will be done.")
+	return null
 
 func is_on_stage(uid : String) -> bool:
 	for n in $characters.get_children():
-		if n.unique_id == uid:
+		if n is Character and n.unique_id == uid:
 			return true
 	return false
 	
 func get_chara_pos(uid:String)->Vector2:
-	var output = Vector2(0,0)
-	var c = find_chara_on_stage(uid)
-	if c: # if c is not null
-		output = c.position
-	return output
+	return find_chara_on_stage(uid).position
 
 func all_on_stage():
-	var output = []
+	var output:Array = []
 	for n in $characters.get_children():
 		var temp = {"uid":n.unique_id, "expression":n.current_expression, \
 		'loc': n.loc, 'fliph':n.flip_h,'flipv':n.flip_v}
@@ -183,7 +169,6 @@ func set_flip(uid:String, fliph:bool=false, flipv:bool=false):
 	if c:
 		c.flip_h = fliph
 		c.flip_v = flipv
-	
 	
 func clean_up():
 	remove_chara("absolute_all")

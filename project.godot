@@ -24,6 +24,11 @@ _global_script_classes=[ {
 "language": "GDScript",
 "path": "res://GodetteVN/Core/_Details/DvarCalculator.gd"
 }, {
+"base": "Node2D",
+"class": "FakeWalker",
+"language": "GDScript",
+"path": "res://GodetteVN/Core/_Details/HelperClasses/FakeWalker.gd"
+}, {
 "base": "RichTextLabel",
 "class": "FloatText",
 "language": "GDScript",
@@ -68,6 +73,7 @@ _global_script_class_icons={
 "Character": "",
 "ClickableObject": "",
 "DvarCalculator": "",
+"FakeWalker": "",
 "FloatText": "",
 "GeneralDialog": "",
 "ObjectTimer": "",

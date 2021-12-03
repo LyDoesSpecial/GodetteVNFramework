@@ -228,7 +228,8 @@ func MarkUp(words:String):
 # If input is not string, simply return the input
 # If input is a string and cannot be understood, it will return false.
 func read(s, json:bool=false):
-	if typeof(s) == TYPE_STRING:
+	var type = typeof(s)
+	if type == TYPE_STRING:
 		if json:
 			pass
 		else:
@@ -242,6 +243,10 @@ func read(s, json:bool=false):
 						return float(s)
 					else:
 						return false
+	elif type == TYPE_ARRAY:
+		for i in range(s.size()):
+			if vn.dvar.has(s[i]):
+				s[i] = vn.dvar[s[i]]
 	else:
 		return s
 
