@@ -459,7 +459,9 @@ Rotates the character given number of degress in sdir direction in the given tim
 chara:: * move; loc:: *; time::(1); type:: (linear) ; expression:: (no change by default);
 Moves the character to location loc in given time with given movement type. If a valid expression is given, changes the expression when moving is done. Otherwise, there will be no expression change.
 
-chara:: * jump; amount:: (80); time:: (0.25); dir:: (up) ;
+The loc field in the move event can be replaced by amount, and the value for amount should be a Vector2 or two numbers separated by a space which will be parsed into a Vector2. This represents movement to the location of uid's current position + the vector amount. 
+
+chara:: * jump; amount:: (80); time:: (0.15); dir:: (up) ;
 Moves the character in direction dir with amount distance and back. This is done linearly in the given time. Dir can be up, down, left, right, or any other vector or \"R\" or \"r\" for random direction. The system will noramlize the direction for you. The default values will show a jump animation and therefore this event is called jump. Supports 'all'.
 
 chara::* add; at:: *; path:: *;
@@ -471,9 +473,9 @@ to change expression.
 
 There are two special character expression that are prebuilt. You do not need the corresponding sprites.
 
-flip and vflip
+flip and flipv
 
-You can use them as any other expressions. Flip will flip horizontally, and vflip will flip vertically. This will be reset if the character leaves.
+You can use them as any other expressions. Flip will flip horizontally, and flipv will flip vertically. This will be reset if the character leaves.
 
 
 Character Class:
@@ -482,9 +484,9 @@ Customizable Attributes:
 
 Display name: the display name of the character.
 Name color: the color for display name.
-In_all: determines whether or not the special uid all applies to this character or not.
+In_all: determines whether or not the special uid 'all' applies to this character or not.
 apply_highlight: when not talking, the sprites will be slightly dimmed.
-fade_on_change: creates a fading effect when changing expression, making expression changes look smoother.
+fade_on_change: creates a fading effect when changing expression, making expression changes look smoother. 
 fade_time: the fading time if fade_on_change is on.
 use_character_font: if on, then the given fonts will be applied when this character is talking.
 

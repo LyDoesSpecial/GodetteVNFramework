@@ -885,6 +885,8 @@ func character_fadeout(uid: String, ev:Dictionary):
 func character_move(uid:String, ev:Dictionary):
 	var type = _has_or_default(ev,'type','linear')
 	var expr = _has_or_default(ev,'expression','')
+	if ev.has('amount'):
+		ev['loc'] = _parse_loc(ev['amount']) + stage.get_chara_pos(uid)
 	if ev.has('loc'):
 		if type == 'instant' or vn.skipping:
 			stage.change_pos(uid, ev['loc'], expr)
