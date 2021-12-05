@@ -9,7 +9,6 @@ var food_choices = [
 
 #---------------------------------- Dialogs ---------------------------------------
 var main_block = [
-	
 	# start of content
 	{"bg": "condo.jpg"},
 	{"dvar":'mo += 50*2-mo'},
@@ -103,7 +102,7 @@ var choice_blocks = {'food': food_choices}
 
 #---------------------------------------------------------------------
 func _ready():
-	start_scene(dialog_blocks, choice_blocks, {}, vn.Pgs.load_instruction, "starter", 10)
+	start_scene(dialog_blocks, choice_blocks, {}, vn.Pgs.load_instruction)
 
 #---------------------------------------------------------------------
 

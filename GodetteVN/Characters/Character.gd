@@ -17,7 +17,6 @@ export(String, FILE, '*.tres') var bold_font = ''
 export(String, FILE, '*.tres') var italics_font = ''
 export(String, FILE, '*.tres') var bold_italics_font = ''
 
-var rng = RandomNumberGenerator.new()
 var _fading:bool = false
 #-----------------------------------------------------
 # Character attributes
@@ -55,14 +54,13 @@ func shake(amount: float, time : float, mode = 0):
 	add_child(_objTimer)
 	
 func _shake_action(params):
-	rng.randomize()
 	# params[0] = mode, params[1] = amount
 	match params[0]:
-		0:position = loc + 0.02*Vector2(rng.randf_range(-params[1], params[1]), rng.randf_range(-params[1], params[1]))
-		1:position = loc + 0.02*Vector2(loc.x, rng.randf_range(-params[1], params[1]))
-		2:position = loc + 0.02*Vector2(rng.randf_range(-params[1], params[1]), loc.y)
+		0:position = loc + 0.02*vn.Utils.random_vec(Vector2(-params[1],params[1]), Vector2(-params[1],params[1]))
+		1:position = loc + 0.02*Vector2(loc.x, vn.Utils.random_num(-params[1],params[1]))
+		2:position = loc + 0.02*Vector2(vn.Utils.random_num(-params[1],params[1]), loc.y)
 		
-# Is there a better way?
+# Is there a better way? If I use tween, then position will be locked, and bad news.
 func jump(direc:Vector2, amount:float, time:float):
 	var step : float = amount/(time/0.04)
 	var _objTimer = ObjectTimer.new(self,time,0.02,"_jump_action", [direc,step], true)
@@ -87,7 +85,7 @@ func fadein(time : float, expression:String=""):
 	tween.start()
 	
 func fadeout(time : float):
-	var expFrames = self.get_sprite_frames()
+	var expFrames = get_sprite_frames()
 	vn.Utils.after_image(self.position, self.scale, self.modulate, self.flip_h, self.flip_v, self.rotation_degrees,\
 		 expFrames.get_frame(current_expression,0), time, self)
 	
@@ -97,13 +95,11 @@ func spin(sdir:int,deg:float,t:float,type:String="linear"):
 	else: 
 		sdir = -1
 	deg = (sdir*deg)
-	var m = vn.Utils.movement_type(type)
 	var tween = OneShotTween.new()
-	add_child(tween)
 	tween.interpolate_property(self,'rotation_degrees',self.rotation_degrees, self.rotation_degrees+deg,t,\
-		m,Tween.EASE_IN_OUT)
+		vn.Utils.movement_type(type), Tween.EASE_IN_OUT)
+	add_child(tween)
 	tween.start()
-	
 
 func _dummy_fadeout(expFrames, prev_exp:String):
 	if fade_on_change and prev_exp != "":
@@ -115,7 +111,6 @@ func change_pos_2(loca:Vector2, time:float, type:String="linear", expr:String=''
 	self.loc = loca
 	var m = vn.Utils.movement_type(type)
 	var fake = FakeWalker.new()
-	fake.name = "_dummy"
 	fake.position = position
 	stage.add_child(fake)
 	var fake_tween
@@ -123,7 +118,7 @@ func change_pos_2(loca:Vector2, time:float, type:String="linear", expr:String=''
 		fake_tween = OneShotTween.new(fake,"queue_free",[])
 	else:
 		fake_tween = OneShotTween.new(self,"change_expression",[expr])
-		fake_tween.connnect("tween_all_completed", fake, "queue_free")
+		fake_tween.connect("tween_all_completed", fake, "queue_free")
 	fake.add_child(fake_tween)
 	fake_tween.interpolate_property(fake,"position",position,loca,time,m,Tween.EASE_IN_OUT)
 	var _objTimer = ObjectTimer.new(self,time,0.01,"_follow_fake",[fake])

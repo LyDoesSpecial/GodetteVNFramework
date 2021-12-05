@@ -15,10 +15,10 @@ func _init(node:Node=null, method:String="", arg:Array=[], free:bool=false):
 	
 func queue_free():
 	# yield(get_tree(),'idle_frame')
-	if call_back_node and call_method != "":
+	if is_instance_valid(call_back_node) and call_method != "":
 		call_back_node.callv(call_method, call_arg)
 		.queue_free()
-	if call_back_node and call_back_node.is_a_parent_of(self):
+	elif is_instance_valid(call_back_node) and call_back_node.is_a_parent_of(self):
 		if free_cb:
 			call_back_node.queue_free()
 		else:

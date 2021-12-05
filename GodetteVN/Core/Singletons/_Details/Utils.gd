@@ -1,5 +1,8 @@
 extends Node
 
+# Eventually, some utilities will be moved out to a singleton 
+# Utilities node.
+
 # A collection of utility functions
 var rng = RandomNumberGenerator.new()
 #-------------------------------------------------------------------------
@@ -225,28 +228,28 @@ func MarkUp(words:String):
 	
 #---------------------------------------------------------------------
 # read the input and try to understand it
-# If input is not string, simply return the input
-# If input is a string and cannot be understood, it will return false.
 func read(s, json:bool=false):
 	var type = typeof(s)
 	if type == TYPE_STRING:
 		if json:
 			pass
 		else:
-			match s.to_lower():
-				"true": return true
-				"false": return false
-				_: 
-					if vn.dvar.has(s):
-						return vn.dvar[s]
-					if s.is_valid_float():
-						return float(s)
-					else:
-						return false
+			var lower = s.to_lower()
+			if lower == "true":
+				return true
+			elif lower == "false":
+				return false
+			elif vn.dvar.has(s):
+				return vn.dvar[s]
+			elif s.is_valid_float():
+				return float(s)
+			else:
+				return false
 	elif type == TYPE_ARRAY:
 		for i in range(s.size()):
 			if vn.dvar.has(s[i]):
 				s[i] = vn.dvar[s[i]]
+		return s
 	else:
 		return s
 
@@ -264,6 +267,18 @@ func yes_mouse():
 #---------------------------------------------------------------------
 # Global time controller
 
-
+# OneShot Job Scheduler
+func schedule_job(n:Node, method:String, wtime:float, params:Array):
+	var timer = Timer.new()
+	timer.one_shot = true
+	timer.wait_time = wtime
+	timer.connect('timeout',self,'_run_job',[timer,n,method,params])
+	add_child(timer)
+	timer.start()
+		
+func _run_job(t:Timer, n:Node, m:String, params:Array):
+	t.queue_free()
+	if is_instance_valid(n):
+		n.callv(m, params)
 
 

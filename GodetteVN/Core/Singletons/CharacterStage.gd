@@ -1,4 +1,4 @@
-extends Node2D
+extends Node
 
 const direction = {'up': Vector2.UP, 'down': Vector2.DOWN, 'left': Vector2.LEFT, 'right': Vector2.RIGHT}
 
@@ -21,7 +21,6 @@ func shake(uid : String, amount:float = 250, time:float = 2, mode:int = 0):
 	else:
 		find_chara_on_stage(uid).shake(amount, time, mode)
 
-
 func jump(uid:String, dir:Vector2=Vector2.UP, amount:float = 80, time:float = 0.1):
 	if uid == 'all':
 		for n in $characters.get_children():
@@ -42,7 +41,7 @@ func change_pos(uid:String, loc:Vector2, expr:String=''): # instant position cha
 	var c = find_chara_on_stage(uid)
 	c.position = loc
 	c.loc = loc
-	if expr != '':
+	if expr != '': # empty string means no expression change, not default.
 		c.change_expression(expr)
 
 func change_pos_2(uid:String, loca:Vector2, time:float = 1, type:String= "linear", expr:String=''):
@@ -131,7 +130,6 @@ func remove_chara(uid : String):
 	else:
 		find_chara_on_stage(uid).call_deferred("free")
 
-
 func set_modulate_4_all(c : Color):
 	for n in $characters.get_children():
 		if n is Character and n.apply_highlight:
@@ -176,5 +174,5 @@ func clean_up():
 
 func remove_on_rollback(arr):
 	for n in $characters.get_children():
-		if not (n.unique_id in arr ):
+		if n is Character and not (n.unique_id in arr ):
 			n.call_deferred('free')

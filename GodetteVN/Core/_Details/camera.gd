@@ -1,69 +1,59 @@
 extends Camera2D
 
-onready var shakeTimer = $Timer
-
-var shake_amount = 200
-var rng = RandomNumberGenerator.new()
+var shake_amount = 250
 var type : int
-const default_offset = Vector2(0,0)
+const default_offset:Vector2 = Vector2(0,0)
 
-var target_degree = self.rotation_degrees
-var target_zoom = self.zoom
-var target_offset = self.offset
-
-
+var target_degree:float = self.rotation_degrees
+var target_zoom:Vector2 = self.zoom
+var target_offset:Vector2 = self.offset
 
 func _ready():
 	set_process(false)
 	
 func _process(delta):
 	var shake_vec = Vector2()
-	if type == 0: # regular
-		shake_vec = Vector2(rng.randf_range(-shake_amount, shake_amount),\
-		rng.randf_range(-shake_amount, shake_amount))
-	elif type == 1: #vpunch
-		shake_vec = Vector2(0, rng.randf_range(-shake_amount, shake_amount))
-	elif type == 2: # hpunch
-		shake_vec = Vector2(rng.randf_range(-shake_amount, shake_amount), 0)
-	else: # currently, else means nothing
-		shake_vec = Vector2(0,0)
+	match type:
+		0: shake_vec = vn.Utils.random_vec(Vector2(-shake_amount,shake_amount),\
+			Vector2(-shake_amount, shake_amount))
+		1: shake_vec = Vector2(0, vn.Utils.random_num(-shake_amount, shake_amount))
+		2: shake_vec = Vector2(vn.Utils.random_num(-shake_amount, shake_amount), 0)
+		_: shake_vec = Vector2(0,0)
 	
+	# 0: regular, 1 shake horizontally, 2 shake vertically
 	self.offset = shake_vec * delta + default_offset
-	
-	
-func shake(amount, time):
-	shake_amount = amount
-	if time < 0.5:
-		shakeTimer.wait_time = 0.5
-	else:
-		shakeTimer.wait_time = time
-		 
-	type = 0
-	set_process(true)
-	shakeTimer.start()
-	
 
-func vpunch():
-	shake_amount = 600
-	shakeTimer.wait_time = 0.9
-	type = 1
-	set_process(true)
-	shakeTimer.start()
-	
-func hpunch():
-	shake_amount = 600
-	shakeTimer.wait_time = 0.9
-	type = 2
-	set_process(true)
-	shakeTimer.start()
-	
-
-func _on_Timer_timeout():
-	shake_amount = 200
+func shake_off():
+	shake_amount = 250
 	type = 0
 	set_process(false)
 	self.offset = default_offset
+
+func shake(amount, time):
+	shake_amount = amount
+	if time < 0.5 and time > 0:
+		time = 0.5
+	type = 0
+	set_process(true)
+	if time > 0:
+		vn.Utils.schedule_job(self,"shake_off",time,[])
 	
+	# Time < 0 means shake until shake_off is called manually. negative time
+	# can only be entered from code, and not vn script. By default, vn script
+	# will force the value to be positive.
+
+func vpunch(amount:float=600, t:float=0.9):
+	shake_amount = amount
+	type = 1
+	set_process(true)
+	vn.Utils.schedule_job(self,"shake_off",t,[])
+	
+func hpunch(amount:float=600, t:float=0.9):
+	shake_amount = amount
+	type = 2
+	set_process(true)
+	vn.Utils.schedule_job(self,"shake_off",t,[])
+
 func camera_spin(sdir:int, deg:float, t:float, mode = "linear"):
 	if sdir > 0:
 		sdir = 1
@@ -71,11 +61,10 @@ func camera_spin(sdir:int, deg:float, t:float, mode = "linear"):
 		sdir = -1
 	deg = (sdir*deg)
 	target_degree = self.rotation_degrees+deg
-	var m = vn.Utils.movement_type(mode)
 	var tween = OneShotTween.new()
 	add_child(tween)
 	tween.interpolate_property(self, "rotation_degrees", self.rotation_degrees, target_degree, t,
-		m, Tween.EASE_IN_OUT)
+		vn.Utils.movement_type(mode), Tween.EASE_IN_OUT)
 	tween.start()
 		
 	
@@ -84,11 +73,10 @@ func camera_move(off:Vector2, t:float, mode = 'linear'):
 	if t <= 0.05:
 		self.offset = off
 	else:
-		var m = vn.Utils.movement_type(mode)
 		var tween = OneShotTween.new()
 		add_child(tween)
 		tween.interpolate_property(self, "offset", self.offset, off, t,
-			m, Tween.EASE_IN_OUT)
+			vn.Utils.movement_type(mode), Tween.EASE_IN_OUT)
 		tween.start()
 		
 func zoom_timed(zm:Vector2, t:float, mode:String, off = Vector2(1,1)):
@@ -115,7 +103,7 @@ func zoom(zm:Vector2, off = Vector2(1,1)):
 	
 func reset():
 	for child in get_children():
-		if child.get_class() == "Tween":
+		if child.get_class() == "Tween": # base class will be returned
 			child.remove_all()
 	
 	self.offset = default_offset

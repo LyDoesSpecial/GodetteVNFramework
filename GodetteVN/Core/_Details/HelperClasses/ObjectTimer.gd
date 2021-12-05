@@ -38,6 +38,6 @@ func _timeout():
 	
 	if _counter >= _total:
 		emit_signal("call_func", _params)
-		self.queue_free()
+		queue_free()
 	else:
 		emit_signal("call_func", _params)

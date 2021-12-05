@@ -527,13 +527,13 @@ func voice(path:String, auto_forw:bool = true) -> void:
 	auto_load_next(auto_forw)
 	
 #------------------- Related to Background and Godot Scene Change ----------------------
-# Bad code. GET RID OF YIELD HERE.
+
 func change_background(ev : Dictionary, auto_forw=true) -> void:
 	var path:String = ev['bg']
 	if ev.size() == 1 or vn.skipping or vn.inLoading:
 		bg.bg_change(path)
 	else: # size > 1
-		var eff_name:String = ""
+		var eff_name:String=""
 		for k in ev.keys():
 			if k in vn.TRANSITIONS:
 				eff_name = k
@@ -546,7 +546,7 @@ func change_background(ev : Dictionary, auto_forw=true) -> void:
 		screen.screen_transition("full",eff_name,color,eff_dur,path)
 		yield(screen, "transition_finished")
 	
-	vn.Pgs.playback_events['bg'] = path	
+	vn.Pgs.playback_events['bg'] = path
 	auto_load_next(!vn.inLoading and auto_forw)
 
 func change_scene_to(path : String):
@@ -754,7 +754,8 @@ func camera_effect(ev : Dictionary) -> void:
 				vn.Pgs.playback_events['camera'] = {'zoom':camera.target_zoom, 'offset':camera.target_offset,\
 				'deg':camera.target_degree}
 			else:
-				vn.error('Camera zoom expects a scale.', ev)
+				print("!!! Wrong camera zoom format: %s" %ev)
+				push_error('Camera zoom expects a scale.')
 		"move":
 			QM.reset_skip()
 			var time:float = _has_or_default(ev, 'time', 1)
@@ -767,8 +768,8 @@ func camera_effect(ev : Dictionary) -> void:
 				print("!!! Wrong camera event format: " + str(ev))
 				push_error("Camera move expects a loc and time, and type (optional)")
 		"shake":
-			if not vn.skipping:
-				camera.shake(_has_or_default(ev,'amount',250), _has_or_default(ev,'time',2))
+			if not vn.skipping: # min shake time is 0.5
+				camera.shake(_has_or_default(ev,'amount',250), max(_has_or_default(ev,'time',2),0.5))
 		"spin":
 			if ev.has('deg'):
 				var type:String = _has_or_default(ev,'type','linear')
@@ -877,7 +878,6 @@ func character_jump(uid : String, ev : Dictionary) -> void:
 	stage.jump(uid, _has_or_default(ev,'dir',Vector2.UP), _has_or_default(ev,'amount',80), _has_or_default(ev,'time',0.1))
 	auto_load_next()
 	
-# redundant? Directly call stage? No. This one has a yield, which should be here.
 func character_fadeout(uid: String, ev:Dictionary):
 	stage.fadeout(uid, _has_or_default(ev,'time',1))
 	auto_load_next()
@@ -1303,7 +1303,7 @@ func dimming(c : Color):
 	get_node('background').modulate = c
 	stage.set_modulate_4_all(c)
 	
-func call_method(ev:Dictionary, auto_forw = true):
+func call_method(ev:Dictionary, auto_forw:bool = true):
 	# rollback and save are not taken care of by default because
 	# there is no way to predict what the method will do
 	if ev.has('params'):
