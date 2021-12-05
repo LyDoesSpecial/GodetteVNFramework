@@ -37,8 +37,9 @@ make full use of the framework.
 In the folder res://GodetteVN/ , you can find sample projects to run.
 
 Before you run your own sample scene, make sure your character is created via the 
-actor editor and saved as a scene. Moreover, you have to register your characters
-in characterManager.gd (this file can be found in the singleton folder.) This may change in the future.
+actor editor and saved as a scene. Moreover, you have to register your characters. 
+Go to GodetteVN/Singletons/vn.tscn, and find Characters node and follow the examples
+from there. Same deal with dvars. 
 
 There are 3 core components in this framework.
 1. An actor editor (WIP, mostly stable for written functions) 
