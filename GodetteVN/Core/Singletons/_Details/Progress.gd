@@ -90,7 +90,7 @@ func checkSkippable()->bool:
 func makeSnapshot():
 	updateRollback()
 	if checkSkippable() == false:
-		vn.Filles.system_data[currentNodePath][currentBlock] = currentIndex
+		vn.Files.system_data[currentNodePath][currentBlock] = currentIndex
 
 func resetControlStates(to:bool=true):
 	# By default, resets everything back to true

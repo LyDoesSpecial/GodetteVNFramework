@@ -21,7 +21,6 @@
 3. You will have to learn Godot along the way if you want to step outside Visual Novels in your game.
 
 ### Future Plans:
-
 1. Side Picture correspondence. (Already has everything needed. Just need to create an interface.)
 2. Simplify the whole process.
 3. More builtin templates. (Like a customizable phone screen template, liteDialogNode, etc.)
