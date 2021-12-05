@@ -1,6 +1,7 @@
 extends Node
 
-# Put Uid of characters
+# Put Uid of characters. The system will find them. Make sure the scenes
+# are in the Character folder.
 var stage_characters = [
 	"female", 
 	"test2"
