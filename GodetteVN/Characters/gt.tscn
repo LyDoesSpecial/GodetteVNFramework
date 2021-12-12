@@ -5,6 +5,7 @@
 
 [node name="gt" type="AnimatedSprite"]
 modulate = Color( 0.862745, 0.862745, 0.862745, 1 )
+z_index = 1
 frames = ExtResource( 2 )
 script = ExtResource( 1 )
 display_name = "Godette"

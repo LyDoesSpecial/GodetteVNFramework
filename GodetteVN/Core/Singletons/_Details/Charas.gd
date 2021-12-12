@@ -20,11 +20,11 @@ func _ready():
 
 # Keep a record of the path to the scene of the stage character
 func stage_character(uid:String) -> void:
-	if uid in vn.BAD_UIDS:
+	if uid in vn.BAD_UIDS or uid.begins_with("_"):
 		if uid == "":
-			vn.error("The empty string uid is preserved for the narrator." % [uid])
+			push_error("The empty string uid is preserved for the narrator.")
 		else:
-			vn.error("The uid %s is not allowed." % [uid])
+			push_error("The uid %s is not allowed."% [uid])
 	
 	var path = vn.CHARA_SCDIR+uid+".tscn"
 	var ch_scene = load(path)

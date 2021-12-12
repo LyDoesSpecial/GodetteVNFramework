@@ -46,6 +46,15 @@ func change_expression(e : String, in_fadein:bool=false) -> bool:
 		print("!!! Nothing is done.")
 		return false
 
+func change_scale(sc:Vector2, t:float, type:String="linear"):
+	sc.x = max(abs(sc.x), sc.x)
+	sc.y = max(abs(sc.y), sc.y)
+	var tween = OneShotTween.new()
+	tween.interpolate_property(self,'scale',self.scale, sc,t,\
+		vn.Utils.movement_type(type), Tween.EASE_IN_OUT)
+	add_child(tween)
+	tween.start()
+
 func shake(amount: float, time : float, mode = 0):
 	# 0 : regular shake
 	# 1 : vpunch
@@ -130,6 +139,5 @@ func _follow_fake(params):
 	if is_instance_valid(fake):
 		position += fake.get_disp()
 
-	
 func is_fading():
 	return _fading

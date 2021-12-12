@@ -25,7 +25,7 @@ const ThumbnailFormat = Image.FORMAT_RGB8
 # constant. The result is a much bigger save file for a tiny quality gain.
 
 # Encryption password used for saves
-const PASSWORD = "nanithefuck"
+const PASSWORD = "nanithefuck!"
 
 # Dim color
 const DIM = Color(0.86,0.86,0.86,1) # Dimming of non talking characters

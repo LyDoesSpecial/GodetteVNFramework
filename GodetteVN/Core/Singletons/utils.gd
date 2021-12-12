@@ -1,0 +1,41 @@
+extends Node
+
+var rng = RandomNumberGenerator.new()
+
+# Related to randomness
+
+func random_num(lower:float, upper:float):
+	rng.randomize()
+	return rng.randf_range(lower, upper)
+
+func random_vec(x:Vector2, y:Vector2):
+	return Vector2(random_num(x.x,x.y),random_num(y.x,y.y))
+	
+func random_int(lower:int, upper:int):
+	rng.randomize()
+	return rng.randi_range(lower, upper)
+	
+func randval_from_list(list:Array):
+	return list[random_int(0,list.size()-1)]
+#------------------------------------------------------------
+
+# OneShot Job Scheduler
+func schedule_job(n:Node, method:String, wtime:float, params:Array):
+	var timer = Timer.new()
+	timer.one_shot = true
+	timer.wait_time = wtime
+	timer.connect('timeout',self,'_run_job',[timer,n,method,params])
+	add_child(timer)
+	timer.start()
+		
+func _run_job(t:Timer, n:Node, m:String, params:Array):
+	t.queue_free()
+	if is_instance_valid(n):
+		n.callv(m, params)
+#------------------------------------------------------------
+# Dictionary manipulation
+func _has_or_default(ev:Dictionary, fname:String , default):
+	if ev.has(fname): 
+		return ev[fname]
+	else: 
+		return default

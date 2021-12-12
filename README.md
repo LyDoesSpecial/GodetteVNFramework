@@ -84,3 +84,4 @@ Documentation will be in the VNScript editor in the framework.
 ### You can contact me on Discord for any questions.
 
 Discord: T.Q#8863
+Twitter: @TqAbstrac

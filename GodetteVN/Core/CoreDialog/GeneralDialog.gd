@@ -282,12 +282,12 @@ func speech_parse(ev : Dictionary) -> void:
 		dialogbox.add_font_override('normal_font', load(path))
 
 	# Speech
-	var combine
+	var combine = "_"
 	for k in ev.keys(): # k is not voice, not speed, means it has to be "uid expression"
 		if k != 'voice' and k != 'speed':
 			combine = k # combine=unique_id and expression combined
 			break
-	if not combine:
+	if combine == "_":
 		print("!!! Speech event uid format error: " + str(ev))
 		push_error("Speech event requires a valid character/narrator.")
 	
@@ -794,74 +794,42 @@ func camera_effect(ev : Dictionary) -> void:
 			
 	auto_load_next()
 #----------------------------- Related to Character ----------------------------
+# Needs refactor. The details should be left to stage, not here.
+
 func character_event(ev : Dictionary) -> void:
-	# For character event, auto_load_next should be considered within
-	# each individual method.
 	var temp:Array = ev['chara'].split(" ")
 	if temp.size() != 2:
-		vn.error('Expecting a uid and an effect name separated by a space.', ev)
+		push_error('Expecting a uid and an effect name separated by a space.')
 	var uid:String = vn.Chs.forward_uid(temp[0]) # uid of the character
 	var ef:String = temp[1] # what character effect
 	if uid == 'all' or stage.is_on_stage(uid):
+		var valid:bool = true
 		match ef: # jump and shake will be ignored during skipping
-			"shake", "vpunch", "hpunch": 
-				if vn.skipping : 
-					auto_load_next()
-				else:
-					if ef == "vpunch":
-						character_shake(uid, ev, 1)
-					elif ef == "hpunch":
-						character_shake(uid, ev, 2)
-					else:
-						character_shake(uid, ev, 0)
-			"add": character_add(uid, ev)
-			"spin": character_spin(uid,ev)
-			"jump": 
-				if vn.skipping : 
-					auto_load_next()
-				else:
-					character_jump(uid, ev)
+			"shake", "vpunch", "hpunch":
+				var modes:Dictionary = {"shake":0, "vpunch":1,"hpunch":2}
+				ev['mode'] = modes[ef]
+				ef = "shake"
+			"leave","fadeout","spin","jump", "scale","add":
+				pass 
 			'move': 
-				if uid == 'all': 
-					print("!!! Warning: Attempting to move all character at once.")
-					print("!!! This is currently not allowed and this event is ignored.")
-					auto_load_next()
-				else:
-					character_move(uid, ev)
-			'fadeout': 
-				if vn.skipping:
-					stage.remove_chara(uid)
-					auto_load_next()
-				else:
-					character_fadeout(uid,ev)
-			'leave': 
-				stage.remove_chara(uid)
-				auto_load_next()
-			_: push_error('Unknown character event/action: %s' % ev)
-		
-		# End of the branch
-	else: # uid is not all, and character not on stage
-		var expression:String = _has_or_default(ev,'expression', 'default')
-		if ef == 'join':
-			if ev.has('loc'):
-				stage.join(uid,ev['loc'], expression)
+				if ev.has('amount'):
+					ev['loc'] = _parse_loc(ev['amount']) + stage.get_chara_pos(uid)
+			_: 
+				valid = false
+				push_error('Unknown character event/action: %s' % ev)
+		if valid: stage.call("character_%s"%ef, uid, ev)
+		auto_load_next()
+	else: # uid is not all, and character not on stage, must be join or fadein
+		if ev.has('loc'):
+			if ef in ['join','fadein']:
+				stage.call("character_%s"%ef, uid, ev)
+				auto_load_next(!vn.inLoading)
 			else:
-				print("!!! Character join event is missing a loc field. Nothing is done.")
-		elif ef == 'fadein':
-			if ev.has('loc'): 
-				stage.fadein(uid,_has_or_default(ev,'time',1), ev['loc'], expression)
-			else:
-				print("!!! Character fadein event is missing a loc field. Nothing is done.")
+				print("!!! Unknown event: %s"%ev)
+				push_error("Unknown character event.")
 		else:
-			print("!!! Unknown character event %s." %ev)
-			push_error("'Unknown character event/action.'")
-		auto_load_next(!vn.inLoading)
-
-# This method is here to fill in default values
-func character_shake(uid:String, ev:Dictionary, mode:int=0) -> void:
-	stage.shake(uid,_has_or_default(ev,'amount',250), _has_or_default(ev,'time',2), mode)
-	auto_load_next()
-	
+			print("!!! Wrong character join/fadein format.")
+			push_error("Character join/fadein must have a loc field.")
 
 func express(combine : String, auto_forw:bool = true, ret_uid:bool = false):
 	var temp:Array = combine.split(" ")
@@ -873,42 +841,6 @@ func express(combine : String, auto_forw:bool = true, ret_uid:bool = false):
 	auto_load_next(auto_forw)
 	if ret_uid: return uid
 
-
-func character_jump(uid : String, ev : Dictionary) -> void:
-	stage.jump(uid, _has_or_default(ev,'dir',Vector2.UP), _has_or_default(ev,'amount',80), _has_or_default(ev,'time',0.1))
-	auto_load_next()
-	
-func character_fadeout(uid: String, ev:Dictionary):
-	stage.fadeout(uid, _has_or_default(ev,'time',1))
-	auto_load_next()
-
-func character_move(uid:String, ev:Dictionary):
-	var type = _has_or_default(ev,'type','linear')
-	var expr = _has_or_default(ev,'expression','')
-	if ev.has('amount'):
-		ev['loc'] = _parse_loc(ev['amount']) + stage.get_chara_pos(uid)
-	if ev.has('loc'):
-		if type == 'instant' or vn.skipping:
-			stage.change_pos(uid, ev['loc'], expr)
-		else:
-			stage.change_pos_2(uid, ev['loc'], _has_or_default(ev,'time',1), type, expr)
-		auto_load_next()
-	else:
-		print("!!! Wrong move event format.")
-		push_error("Character move expects a loc.")
-
-func character_add(uid:String, ev:Dictionary):
-	if ev.has('path') and ev.has('at'):
-		stage.add_to_chara_at(uid, ev['at'], vn.ROOT_DIR + ev['path'])
-		auto_load_next()
-	else:
-		print("!!! Character add event format error.")
-		push_error('Character add expects a path and an "at".')
-		
-func character_spin(uid:String, ev:Dictionary):
-	stage.spin(uid, _has_or_default(ev,'deg',360), _has_or_default(ev,'time',1), _has_or_default(ev,'sdir',1),\
-	 _has_or_default(ev,'type','linear'))
-	auto_load_next()
 #--------------------------------- Weather -------------------------------------
 func change_weather(we:String, auto_forw = true):
 	screen.show_weather(we) # If given weather doesn't exist, nothing will happen
@@ -1081,7 +1013,7 @@ func on_rollback():
 		return
 	
 	#--------Actually rollback
-	var last = vn.Pgs.rollback_records.pop_back()
+	var last:Dictionary = vn.Pgs.rollback_records.pop_back()
 	vn.dvar = last['dvar']
 	propagate_dvar_calls()
 	vn.Pgs.currentSaveDesc = last['currentSaveDesc']
@@ -1131,10 +1063,12 @@ func load_playback(play_back:Dictionary, RBM:bool = false): # Roll Back Mode
 				stage.change_pos(d['uid'], _parse_loc(d['loc']))
 				stage.change_expression(d['uid'], d['expression'])
 			else:
-				stage.join(d['uid'],d['loc'],d['expression'])
+				stage.character_join(d['uid'],{'uid':d['loc'], 'expression':d['expression']})
 		else:
-			stage.join(d['uid'],d['loc'],d['expression'])
+			stage.character_join(d['uid'],{'uid':d['loc'], 'expression':d['expression']})
+		
 		stage.set_flip(d['uid'],d['fliph'],d['flipv'])
+		stage.change_scale(d['uid'],{'scale':d['scale'], 'type':"instant"})
 	
 	if RBM: stage.remove_on_rollback(onStageCharas)
 	
