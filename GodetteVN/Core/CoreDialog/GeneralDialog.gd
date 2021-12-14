@@ -735,11 +735,12 @@ func sfx_player(ev : Dictionary) -> void:
 			print("!!! Your animation player must be named 'AnimationPlayer' for the system to recognize it.")
 	auto_load_next()
 
+# Refactor
 func camera_effect(ev : Dictionary) -> void:
 	var ef_name = ev['camera']
 	match ef_name:
-		"vpunch": if not vn.skipping: camera.vpunch()
-		"hpunch": if not vn.skipping: camera.hpunch()
+		"vpunch": camera.vpunch()
+		"hpunch": camera.hpunch()
 		"reset", '': 
 			camera.reset()
 			vn.Pgs.playback_events.erase('camera')
@@ -787,15 +788,12 @@ func camera_effect(ev : Dictionary) -> void:
 			else:
 				print("!!! Event format error: " + str(ev))
 				push_error("Camera spin event must have a 'deg' degree field.")
-				
 		_:
 			print("!!! Unknown camera event: " + str(ev))
 			push_error("Camera effect not found.")
 			
 	auto_load_next()
 #----------------------------- Related to Character ----------------------------
-# Needs refactor. The details should be left to stage, not here.
-
 func character_event(ev : Dictionary) -> void:
 	var temp:Array = ev['chara'].split(" ")
 	if temp.size() != 2:
@@ -1081,7 +1079,6 @@ func load_playback(play_back:Dictionary, RBM:bool = false): # Roll Back Mode
 	just_loaded = true
 
 func split_equation(line:String):
-	var arith_symbols:Array = ['>','<', '=', '!', '+', '-', '*', '/']
 	var front_var:String = ''
 	var back_var:String = ''
 	var rel:String = ''
@@ -1089,13 +1086,13 @@ func split_equation(line:String):
 	for i in line.length():
 		var le = line[i]
 		if le != " ":
-			var is_symbol:bool = le in arith_symbols
+			var is_symbol:bool = _has_or_default({'>':true,'<':true, '=':true
+					,'!':true, '+':true, '-':true, '*':true, '/':true},le,false)
 			if is_symbol:
 				presymbol = false
 				rel += le
 			if not (is_symbol) and presymbol:
 				front_var += le
-				
 			if not (is_symbol) and not presymbol:
 				back_var += le
 	# Check if back var is an expression or a variable

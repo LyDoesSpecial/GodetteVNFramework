@@ -34,7 +34,7 @@ func shake(amount, time):
 	if time < 0.5 and time > 0:
 		time = 0.5
 	type = 0
-	set_process(true)
+	set_process(true and not vn.skipping)
 	if time > 0:
 		vn.Utils.schedule_job(self,"shake_off",time,[])
 	
@@ -45,13 +45,13 @@ func shake(amount, time):
 func vpunch(amount:float=600, t:float=0.9):
 	shake_amount = amount
 	type = 1
-	set_process(true)
+	set_process(true and not vn.skipping)
 	vn.Utils.schedule_job(self,"shake_off",t,[])
 	
 func hpunch(amount:float=600, t:float=0.9):
 	shake_amount = amount
 	type = 2
-	set_process(true)
+	set_process(true and not vn.skipping)
 	vn.Utils.schedule_job(self,"shake_off",t,[])
 
 func camera_spin(sdir:int, deg:float, t:float, mode = "linear"):

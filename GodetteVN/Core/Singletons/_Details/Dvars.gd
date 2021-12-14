@@ -8,7 +8,7 @@ func dvar_initialization():
 		ban_list[p['name']] = false
 	temp_node.queue_free()
 	for dv in temp.get_property_list():
-		var n = dv['name']
+		var n:String = dv['name']
 		if ban_list.has(n):
 			continue
 		
