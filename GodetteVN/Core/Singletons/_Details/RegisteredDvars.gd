@@ -1,5 +1,7 @@
 extends Node
 
+# Might need some serious re design later. IDK
+#------------------------------------------------------------------------------
 # BASIC GUIDE
 
 	# Global Dvars. (Non temporary)

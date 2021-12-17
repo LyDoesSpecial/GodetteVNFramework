@@ -1,7 +1,7 @@
 extends Node
 
 #-------------Game Control State---------------------------
-var control_state = {
+var control_state:Dictionary = {
 	'right_click': true,
 	'quick_menu':true,
 	'boxes': true,
@@ -9,16 +9,16 @@ var control_state = {
 }
 #----------------------------------------------------------
 # 
-var currentNodePath = null
+var currentNodePath:String
 
-# Current time line 
-var currentBlock = null
+# Current block name
+var currentBlock:String 
 
 # Current index in the block
-var currentIndex = null
+var currentIndex:int 
 
 # Current save description, if there is one
-var currentSaveDesc = ""
+var currentSaveDesc:String = ""
 
 # Playback/lasting events are defined as events that should be remembered when loading
 # back from a save. Example: weather effects. If it's raining and player saves, then when
@@ -26,9 +26,10 @@ var currentSaveDesc = ""
 
 # If player saves in the middle of nvl mode,
 # then when loading back, we need to restore all the nvl text.
-var nvl_text = ''
+var nvl_text:String = ''
 
-var playback_events = {'bg':'', 'bgm':{'bgm':''}, 'charas':[], 'nvl': '','speech':'', 'control_state': control_state}
+var playback_events:Dictionary = {'bg':'', 'bgm':{'bgm':''}, 'charas':[], 'nvl': ''\
+	,'speech':'', 'control_state': control_state}
 
 func get_latest_onstage():
 	playback_events['charas'] = stage.all_on_stage()
@@ -40,17 +41,17 @@ func get_latest_nvl():
 #-------------------------------------------------------------------------------
 # "new_game" = start from new
 # "load_game" = start from given dialog block and index.
-var load_instruction = "new_game"
+var load_instruction:String = "new_game"
 #-------------------------------------------------------------------------------
 
 #------------------------------------------------------
 # List of history entries
-var history = []
+var history:Array = []
 
 
 #-------------Rollback Helper---------------------------
 # List of rollback records
-var rollback_records = []
+var rollback_records:Array = []
 
 #------------------------------------------------------
 # Utility functions
@@ -69,8 +70,8 @@ func updateRollback():
 	if rollback_records.size() > vn.max_rollback_steps:
 		rollback_records.remove(0)
 	
-	var cur_playback = playback_events.duplicate(true)
-	var rollback_data = {'currentBlock': currentBlock, 'currentIndex': currentIndex, \
+	var cur_playback:Dictionary = playback_events.duplicate(true)
+	var rollback_data:Dictionary = {'currentBlock': currentBlock, 'currentIndex': currentIndex, \
 	'currentSaveDesc': currentSaveDesc, 'playback': cur_playback, 'dvar':vn.dvar.duplicate(),
 	'name_patches':vn.Chs.chara_name_patch.duplicate()}
 	rollback_records.push_back(rollback_data)
@@ -82,10 +83,7 @@ func checkSkippable()->bool:
 		#print("Max index is %s" %fileRelated.system_data[game.currentNodePath][game.currentBlock])
 		if currentIndex > vn.Files.system_data[currentNodePath][currentBlock]:
 			return false
-		else:
-			return true
-	else:
-		return true
+	return true
 
 func makeSnapshot():
 	updateRollback()
@@ -94,12 +92,12 @@ func makeSnapshot():
 
 func resetControlStates(to:bool=true):
 	# By default, resets everything back to true
-	for k in control_state.keys():
+	for k in control_state:
 		control_state[k] = to
 
 # Suppose player A returns to main without saving, then the state of playback events should be
 # refreshed.
 func resetPlayback():
 	resetControlStates()
-	rollback_records = []
+	rollback_records.clear()
 	playback_events = {'bg':'', 'bgm':{'bgm':''}, 'charas':[], 'nvl': '','speech':'', 'control_state': control_state}

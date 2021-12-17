@@ -6,7 +6,7 @@ func _ready():
 	
 func _on_returnButton_pressed():
 	vn.inSetting = false
-	self.queue_free()
+	queue_free()
 
 func _input(ev):
 	if ev.is_action_pressed('ui_cancel') or ev.is_action_pressed('vn_cancel'):

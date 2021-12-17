@@ -1,22 +1,20 @@
 extends Node
 
-var all_chara = {
+var all_chara:Dictionary = {
 	# Narrator, the key empty string "" is its UID!
 	"":{"uid":'', "display_name":"","name_color":Color(0,0,0,1),'font':false}
 }
-
-
-var chara_pointer = {}
-var chara_name_patch = {}
-
+var chara_pointer:Dictionary = {}
+var chara_name_patch:Dictionary = {}
 
 func _ready():
-	var registeredCharas = get_node("RegisteredCharacters")
-	for ch in registeredCharas.stage_characters:
+	for ch in $RegisteredCharacters.stage_characters:
 		stage_character(ch)
-	for ch in registeredCharas.spriteless_characters:
+	for ch in $RegisteredCharacters.spriteless_characters:
 		spriteless_character(ch)
-
+		
+	# Maybe free, maybe not free?
+	$RegisteredCharacters.queue_free()
 
 # Keep a record of the path to the scene of the stage character
 func stage_character(uid:String) -> void:
@@ -26,12 +24,9 @@ func stage_character(uid:String) -> void:
 		else:
 			push_error("The uid %s is not allowed."% [uid])
 	
-	var path = vn.CHARA_SCDIR+uid+".tscn"
-	var ch_scene = load(path)
-	if ch_scene == null:
-		vn.error("The character scene cannot be found.")
-	var c = ch_scene.instance()
-	var info = {"uid":c.unique_id,"display_name":c.display_name,"name_color":c.name_color,"path":path}
+	var path:String = vn.CHARA_SCDIR+uid+".tscn"
+	var c:Character = load(path).instance()
+	var info:Dictionary = {"uid":c.unique_id,"display_name":c.display_name,"name_color":c.name_color,"path":path}
 	if c.use_character_font:
 		info['font'] = true
 		info['normal_font'] = c.normal_font
@@ -45,10 +40,9 @@ func stage_character(uid:String) -> void:
 	c.call_deferred('free')
 
 # Difference is that stage character also has a path field.
-
 func spriteless_character(cdata:Dictionary)->void:
 	if cdata.has("uid") and cdata.has("display_name"):
-		var uid = cdata['uid']
+		var uid:String = cdata['uid']
 		if uid in vn.BAD_UIDS:
 			push_error("!!! %s is a bad uid choice. Choose another one." % uid)
 		if not cdata.has("name_color"): 
@@ -105,6 +99,6 @@ func set_new_display_name(uid:String, new_dname:String):
 		
 func patch_display_names():
 	if chara_name_patch.size()>0:
-		for uid in chara_name_patch.keys():
+		for uid in chara_name_patch:
 			set_new_display_name(uid,chara_name_patch[uid])
 

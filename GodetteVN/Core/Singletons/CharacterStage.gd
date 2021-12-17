@@ -15,9 +15,9 @@ func set_sideImage(sc:Vector2 = Vector2(1,1), pos:Vector2 = Vector2(-35,530)):
 
 func character_shake(uid : String, ev:Dictionary):
 	if vn.skipping: return
-	var amount:float = _has_or_default(ev,'amount',250)
-	var time:float = _has_or_default(ev,'time',2)
-	var mode:int = _has_or_default(ev,'mode',0)
+	var amount:float = MyUtils._has_or_default(ev,'amount',250)
+	var time:float = MyUtils._has_or_default(ev,'time',2)
+	var mode:int = MyUtils._has_or_default(ev,'mode',0)
 	if uid == 'all':
 		for n in $characters.get_children():
 			if n is Character and n.in_all: 
@@ -27,9 +27,9 @@ func character_shake(uid : String, ev:Dictionary):
 
 func character_jump(uid:String, ev:Dictionary):
 	if vn.skipping: return 
-	var dir:Vector2 = _has_or_default(ev,'dir',Vector2.UP)
-	var amount:float = _has_or_default(ev,'amount',80)
-	var time:float = _has_or_default(ev,'time',0.1)
+	var dir:Vector2 = MyUtils._has_or_default(ev,'dir',Vector2.UP)
+	var amount:float = MyUtils._has_or_default(ev,'amount',80)
+	var time:float = MyUtils._has_or_default(ev,'time',0.1)
 	if uid == 'all':
 		for n in $characters.get_children():
 			if n is Character and n.in_all:
@@ -39,10 +39,10 @@ func character_jump(uid:String, ev:Dictionary):
 		
 func character_spin(uid:String, ev:Dictionary):
 	# degrees:float = 360.0, time:float = 1.0, sdir:int = 1, type:String="linear"
-	var sdir = _has_or_default(ev,'sdir',1)
-	var time = _has_or_default(ev,'time',1)
-	var degrees = _has_or_default(ev,'deg',360)
-	var type = _has_or_default(ev,'type','linear')
+	var sdir = MyUtils._has_or_default(ev,'sdir',1)
+	var time:float = MyUtils._has_or_default(ev,'time',1)
+	var degrees:float = MyUtils._has_or_default(ev,'deg',360)
+	var type:String = MyUtils._has_or_default(ev,'type','linear')
 	if uid == 'all':
 		for n in $characters.get_children():
 			if n is Character and n.in_all:
@@ -55,12 +55,12 @@ func character_scale(uid:String, ev:Dictionary):
 	if not ev.has('scale'):
 		push_error("Character change scale event must have a scale field.")
 	
-	var c = find_chara_on_stage(uid)
-	var type = _has_or_default(ev,'type','linear')
+	var c:Character = find_chara_on_stage(uid)
+	var type:String = MyUtils._has_or_default(ev,'type','linear')
 	if type == 'instant' or vn.skipping or vn.inLoading:
 		c.scale = ev['scale']
 	else:
-		c.change_scale(ev['scale'], _has_or_default(ev,'time',1), type)
+		c.change_scale(ev['scale'], MyUtils._has_or_default(ev,'time',1), type)
 		
 func character_move(uid:String, ev:Dictionary):
 	if uid == 'all': 
@@ -68,36 +68,36 @@ func character_move(uid:String, ev:Dictionary):
 		print("!!! This is currently not allowed and this event is ignored.")
 		return
 	
-	var type = _has_or_default(ev,'type','linear')
-	var expr = _has_or_default(ev,'expression','')
-	var c = find_chara_on_stage(uid)
+	var type:String = MyUtils._has_or_default(ev,'type','linear')
+	var expr:String = MyUtils._has_or_default(ev,'expression','')
+	var c:Character = find_chara_on_stage(uid)
 	if ev.has('loc'):
 		if type == 'instant' or vn.skipping or vn.inLoading:
 			c.position = ev['loc']
 			c.loc = ev['loc']
-			if expr != '': # empty string means no expression change, not default.
-				c.change_expression(expr)
+			if expr != '': # empty string here means no expression change, not default.
+				var _e:bool = c.change_expression(expr)
 		else:
-			c.change_pos_2(ev['loc'], _has_or_default(ev,'time',1), type, expr)
+			c.change_pos_2(ev['loc'], MyUtils._has_or_default(ev,'time',1.0), type, expr)
 	else:
 		print("!!! Wrong move event format.")
 		push_error("Character move expects a loc.")
 	
 func change_expression(uid:String, expression:String):
-	var info = vn.Chs.all_chara[uid]
+	var info:Dictionary = vn.Chs.all_chara[uid]
 	if info.has('path'):
-		var _err = find_chara_on_stage(uid).change_expression(expression)
+		var _err:bool = find_chara_on_stage(uid).change_expression(expression)
 
 func character_fadein(uid: String, ev:Dictionary) -> void:
 	# Ignore accidental spriteless character fadein
-	var time:float = _has_or_default(ev,'time', 1.0)
-	var expression:String = _has_or_default(ev, 'expression', 'default')
+	var time:float = MyUtils._has_or_default(ev,'time', 1.0)
+	var expr:String = MyUtils._has_or_default(ev, 'expression', 'default')
 	var info = vn.Chs.all_chara[uid]
 	if info.has('path'):
 		if vn.skipping:
 			character_join(uid, ev)
 		else:
-			var c = load(info['path']).instance()
+			var c:Character = load(info['path']).instance()
 			# If load fails, there will be a bug pointing to this line
 			if c.apply_highlight:
 				c.modulate = vn.DIM
@@ -107,13 +107,13 @@ func character_fadein(uid: String, ev:Dictionary) -> void:
 			c.loc = ev['loc']
 			c.position = ev['loc']
 			$characters.add_child(c)
-			c.fadein(time,expression)
+			c.fadein(time,expr)
 
 func character_fadeout(uid: String, ev:Dictionary) -> void:
 	if vn.skipping:
 		character_leave(uid)
 	else:
-		var time:float = _has_or_default(ev,'time',1)
+		var time:float = MyUtils._has_or_default(ev,'time',1)
 		if uid == 'all':
 			for n in $characters.get_children():
 				if n is Character and n.in_all:
@@ -122,21 +122,21 @@ func character_fadeout(uid: String, ev:Dictionary) -> void:
 			find_chara_on_stage(uid).fadeout(time)
 
 func character_join(uid: String, ev:Dictionary):
-	var expression = _has_or_default(ev,'expression','default')
-	var info = vn.Chs.all_chara[uid]
+	var expr:String = MyUtils._has_or_default(ev,'expression','default')
+	var info:Dictionary = vn.Chs.all_chara[uid]
 	if info.has('path'):
-		var ch_scene = load(info['path'])
+		var ch_scene:PackedScene = load(info['path'])
 		# If load fails, there will be a bug pointing to this line
-		var c = ch_scene.instance()
+		var c:Character = ch_scene.instance()
 		$characters.add_child(c)
-		if c.change_expression(expression):
+		if c.change_expression(expr):
 			c.position = ev['loc']
 			c.loc = ev['loc']
 			c.modulate = vn.DIM
 
 func add_to_chara_at(uid:String, ev:Dictionary):
-	var pt_name = ev['at']
-	var path = ev['']
+	var pt_name:String = ev['at']
+	var path:String = ''
 	if ev.has('path') and ev.has('at'):
 		pt_name = ev['at']
 		path = vn.ROOT_DIR + ev['path']
@@ -151,14 +151,14 @@ func add_to_chara_at(uid:String, ev:Dictionary):
 					n.add_child(load(path).instance())
 					break
 	else:
-		var c = find_chara_on_stage(uid)
+		var c:Character = find_chara_on_stage(uid)
 		for n in c.get_children():
 			if n is Node2D and n.name == ('_' + pt_name):
 				n.add_child(load(path).instance())
 				break
 
 func set_highlight(uid : String) -> void:
-	var info = vn.Chs.all_chara[uid]
+	var info:Dictionary = vn.Chs.all_chara[uid]
 	if info.has('path'):
 		for n in $characters.get_children():
 			if n is Character and n.unique_id == uid and n.apply_highlight and not n.is_fading():
@@ -174,7 +174,6 @@ func character_leave(uid : String):
 	if uid == 'absolute_all':
 		for n in $characters.get_children():
 			n.call_deferred("free")
-			
 	elif uid == 'all':
 		for n in $characters.get_children():
 			if n.in_all:
@@ -209,12 +208,12 @@ func all_on_stage():
 	var output:Array = []
 	for n in $characters.get_children():
 		if n is Character:
-			output.append({"uid":n.unique_id, "expression":n.current_expression, \
+			output.append({"uid":n.unique_id, "expression":n.current_expression,\
 			'loc': n.loc, 'fliph':n.flip_h,'flipv':n.flip_v, 'scale':n.scale})
 	return output
 	
 func set_flip(uid:String, fliph:bool=false, flipv:bool=false):
-	var c = find_chara_on_stage(uid)
+	var c:Character = find_chara_on_stage(uid)
 	if c:
 		c.flip_h = fliph
 		c.flip_v = flipv
@@ -227,9 +226,3 @@ func remove_on_rollback(arr):
 	for n in $characters.get_children():
 		if n is Character and not (n.unique_id in arr ):
 			n.call_deferred('free')
-			
-func _has_or_default(ev:Dictionary, fname:String , default):
-	if ev.has(fname): 
-		return ev[fname]
-	else: 
-		return default

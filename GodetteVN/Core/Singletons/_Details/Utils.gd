@@ -31,7 +31,7 @@ func call_premade_events(key:String) -> Dictionary:
 # Other functions that might be used globally
 
 func movement_type(type:String)-> int:
-	var m = 0
+	var m:int = 0
 	match type:
 		"linear": m = 0
 		"sine": m = 1
@@ -45,54 +45,42 @@ func movement_type(type:String)-> int:
 		"bounce": m = 9
 		"back" : m = 10
 		_: m = 0
-		
 	return m
 
 #----------------------------------------------------------------
 
-func random_num(lower:float, upper:float):
-	rng.randomize()
-	return rng.randf_range(lower, upper)
-
-func random_vec(x:Vector2, y:Vector2):
-	return Vector2(random_num(x.x,x.y),random_num(y.x,y.y))
-	
-func random_int(lower:int, upper:int):
-	rng.randomize()
-	return rng.randi_range(lower, upper)
-	
-func randval_from_list(list:Array):
-	return list[random_int(0,list.size()-1)]
-
 func calculate(what:String):
 	# what means what to calculate, should be an algebraic expression
 	# only dvars are allowed
-	var calculator = DvarCalculator.new()
-	var result =  calculator.calculate(what)
+	var calculator:DvarCalculator = DvarCalculator.new()
+	var result = calculator.calculate(what)
 	calculator.call_deferred('free')
 	return result
 
 #----------------------------------------------------------------------
 # creates an after image. Used for fadeout effects / other fancy effects
 
-func after_image(pos:Vector2, scale:Vector2, m:Color, fliph:bool, flipv:bool, deg:float, texture:Texture, fade_time:float, to_free:Node=null):
+func after_image(pos:Vector2, scale:Vector2, m:Color, fliph:bool, flipv:bool, deg:float, texture:Texture, ft:float,z:int,to_free:Node=null):
 	if to_free: # if a to_free node is give, this node will be freed. Used in character fadeout.
 		to_free.call_deferred('free')
 	
-	var dummy = Sprite.new()
+	
+	var dummy:Sprite = Sprite.new()
+	dummy.z_index = z+1
 	dummy.name = "_dummy"
 	dummy.scale = scale
 	dummy.position = pos
 	dummy.texture = texture
 	dummy.flip_h = fliph
 	dummy.flip_v = flipv
+	dummy.modulate = m
 	dummy.rotation_degrees = deg
 	stage.add_child(dummy)
-	var tween = OneShotTween.new(dummy, "queue_free")
+	var tween:OneShotTween = OneShotTween.new(dummy, "queue_free")
 	dummy.add_child(tween)
-	tween.interpolate_property(dummy, "modulate", m, Color(m.r, m.g, m.b, 0), fade_time,
+	var _err = tween.interpolate_property(dummy, "modulate", m, Color(m.r, m.g, m.b, 0), ft,
 		Tween.TRANS_LINEAR, Tween.EASE_IN_OUT)
-	tween.start()
+	_err = tween.start()
 
 #----------------------------------------------------------------------
 # Make a save.
@@ -103,15 +91,13 @@ func create_thumbnail(width = vn.THUMBNAIL_WIDTH, height = vn.THUMBNAIL_HEIGHT):
 	thumbnail.convert(vn.ThumbnailFormat)
 	thumbnail.resize(width, height, Image.INTERPOLATE_BILINEAR)
 	# print(thumbnail.get_format())
-	var dir = Directory.new()
+	var dir:Directory = Directory.new()
 	if !dir.dir_exists(vn.THUMBNAIL_DIR):
-		dir.make_dir_recursive(vn.THUMBNAIL_DIR)
+		var _err = dir.make_dir_recursive(vn.THUMBNAIL_DIR)
 		
-		
-	var file = File.new()
-	var save_path = vn.THUMBNAIL_DIR + 'thumbnail.dat'
-	var error = file.open(save_path, File.WRITE)
-	if error == OK:
+	var file:File = File.new()
+	var save_path:String = vn.THUMBNAIL_DIR + 'thumbnail.dat'
+	if file.open(save_path, File.WRITE) == OK:
 		# store raw image data
 		file.store_var(thumbnail.get_data())
 		file.close()
@@ -121,11 +107,11 @@ func make_a_save(msg = "[Quick Save] " , delay:float = 0.0, offset_by:int = 0):
 	yield(get_tree().create_timer(max(0.05, delay)), 'timeout')
 	create_thumbnail() # delay is mostly used to control the timing of the thumbnail
 
-	var temp = vn.Pgs.currentSaveDesc
-	var curId = vn.Pgs.currentIndex
+	var temp:String = vn.Pgs.currentSaveDesc
+	var curId:int = vn.Pgs.currentIndex
 	vn.Pgs.currentIndex = vn.Pgs.currentIndex - offset_by
 	vn.Pgs.currentSaveDesc = msg + temp
-	var path = vn.SAVE_DIR + 'save' + str(OS.get_system_time_msecs()) + '.dat'
+	var path:String = vn.SAVE_DIR + 'save' + str(OS.get_system_time_msecs()) + '.dat'
 	write_to_save(path, gather_save_data())
 	vn.Pgs.currentSaveDesc = temp
 	vn.Pgs.currentIndex = curId
@@ -133,19 +119,19 @@ func make_a_save(msg = "[Quick Save] " , delay:float = 0.0, offset_by:int = 0):
 func gather_save_data():
 	vn.Files.write_to_config()
 	# appearance of save slot
-	var dt = OS.get_datetime()
+	var dt:Dictionary = OS.get_datetime()
 	dt['month'] = str(dt['month'])
 	dt['day'] = str(dt['day'])
 	dt['year'] = str(dt['year'])
 	dt['hour'] = str(dt['hour'])
 	dt['minute'] = str(dt['minute'])
 	dt['second'] = str(dt['second'])
-	var datetime = dt['month'] + "/" + dt['day'] + "/" + dt['year'] + \
+	var datetime:String = dt['month'] + "/" + dt['day'] + "/" + dt['year'] + \
 	",  " + dt['hour'] + ":" + dt['minute'] + ':' + dt['second']
 	# Actual save
 	vn.Pgs.get_latest_nvl() # get current nvl text.
 	vn.Pgs.get_latest_onstage() # get current on stage characters.
-	var data = {'currentNodePath':vn.Pgs.currentNodePath, 'currentBlock': vn.Pgs.currentBlock,\
+	var data:Dictionary = {'currentNodePath':vn.Pgs.currentNodePath, 'currentBlock': vn.Pgs.currentBlock,\
 	'currentIndex': vn.Pgs.currentIndex, 'thumbnail': latest_thumbnail(),\
 	'currentSaveDesc': vn.Pgs.currentSaveDesc, 'history':vn.Pgs.history,\
 	'playback': vn.Pgs.playback_events, 'datetime': datetime,\
@@ -158,22 +144,21 @@ func gather_save_data():
 	return data
 
 func latest_thumbnail():
-	var dir = Directory.new()
+	var dir:Directory = Directory.new()
 	if !dir.dir_exists(vn.THUMBNAIL_DIR):
-		dir.make_dir_recursive(vn.THUMBNAIL_DIR)
+		var _err:int = dir.make_dir_recursive(vn.THUMBNAIL_DIR)
 		return "res://gui/default_save_thumbnail.png"
 
 	# so directory already exists
-	dir.open(vn.THUMBNAIL_DIR)
-	dir.list_dir_begin()
-	var file_name = "1"
+	var _err:int = dir.open(vn.THUMBNAIL_DIR)
+	_err = dir.list_dir_begin()
+	var file_name:String = "1"
 	while file_name != "":
 		file_name = dir.get_next()
 		if file_name[0] != ".":
 			if file_name == 'thumbnail.dat':
-				var file = File.new()
-				var error = file.open(vn.THUMBNAIL_DIR + file_name, File.READ)
-				if error == OK:
+				var file:File = File.new()
+				if file.open(vn.THUMBNAIL_DIR + file_name, File.READ) == OK:
 					dir.list_dir_end()
 					var v = file.get_var()
 					file.close()
@@ -183,13 +168,12 @@ func latest_thumbnail():
 					return "res://gui/default_save_thumbnail.png"
 
 func write_to_save(path:String, data:Dictionary):
-	var file = File.new()
-	var error = file.open_encrypted_with_pass(path, File.WRITE, vn.PASSWORD)
-	if error == OK:
+	var file:File = File.new()
+	if file.open_encrypted_with_pass(path, File.WRITE, vn.PASSWORD) == OK:
 		file.store_var(data)
 		file.close()
 	else:
-		push_error('Error when loading saves. ' + str(error))
+		push_error('Error when loading saves. Probably save data is corrupted.')
 
 #------------------------------------------------------------------------
 # Given any sentence with a [dvar] in it, 
@@ -197,9 +181,9 @@ func write_to_save(path:String, data:Dictionary):
 # to the sentence. Same with special tokens. It doesn't handle nw, and so is different
 # from that in GeneralDialog.
 func MarkUp(words:String):
-	var leng = words.length()
-	var output = ''
-	var i = 0
+	var leng:int = words.length()
+	var output:String = ''
+	var i:int = 0
 	while i < leng:
 		var c = words[i]
 		var inner = ""
@@ -266,19 +250,5 @@ func yes_mouse():
 	vn.noMouse = false
 #---------------------------------------------------------------------
 # Global time controller
-
-# OneShot Job Scheduler
-func schedule_job(n:Node, method:String, wtime:float, params:Array):
-	var timer = Timer.new()
-	timer.one_shot = true
-	timer.wait_time = wtime
-	timer.connect('timeout',self,'_run_job',[timer,n,method,params])
-	add_child(timer)
-	timer.start()
-		
-func _run_job(t:Timer, n:Node, m:String, params:Array):
-	t.queue_free()
-	if is_instance_valid(n):
-		n.callv(m, params)
 
 

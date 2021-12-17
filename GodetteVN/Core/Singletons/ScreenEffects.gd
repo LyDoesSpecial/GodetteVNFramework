@@ -14,7 +14,7 @@ onready var _shader: ShaderMaterial = _color_panel.material
 #------------------------------------------------------------------------
 
 
-const all_weathers = {
+const all_weathers:Dictionary = {
 	'rain': "res://GodetteVN/Core/_Details/Weathers/rain.tscn",
 	'snow': "res://GodetteVN/Core/_Details/Weathers/snow.tscn",
 	'light': "res://GodetteVN/Core/_Details/Weathers/light.tscn",
@@ -32,38 +32,32 @@ func weather_off():
 	
 func show_weather(w_name:String):
 	weather_off() # Weather is exclusive
-	var w = get_node("weather")
+	var w:Node = get_node("weather")
 	if all_weathers.has(w_name):
-		var weather = load(all_weathers[w_name])
-		w.add_child(weather.instance())
-	else:
-		if w_name != "":
-			print('Warning: weather not found. Nothing is done.')
+		w.add_child(load(all_weathers[w_name]).instance())
+	else: print('Warning: weather not found. Nothing is done.')
 
 func removeLasting():
-	var lasting = get_node('lasting')
-	for n in lasting.get_children():
+	for n in $lasting.get_children():
 		n.call_deferred('free')
 
 
-func tint(c: Color,time : float):
+func tint(c: Color,t : float):
 	removeLasting()
-	var tintRect = load("res://GodetteVN/Core/_Details/tintRect.tscn")
-	var tint = tintRect.instance()
-	get_node('lasting').add_child(tint)
-	tint.set_tint(c, time)
+	var tint:Node = load("res://GodetteVN/Core/_Details/tintRect.tscn").instance()
+	$lasting.add_child(tint)
+	tint.set_tint(c, t)
 	
 func tintWave(c: Color, t : float):
 	removeLasting()
-	var tintRect = load("res://GodetteVN/Core/_Details/tintRect.tscn")
-	var tint = tintRect.instance()
-	get_node('lasting').add_child(tint)
+	var tint:Node = load("res://GodetteVN/Core/_Details/tintRect.tscn").instance()
+	$lasting.add_child(tint)
 	tint.set_tintwave(c, t)
 	
 func flashlight(sc : Vector2):
 	removeLasting()
-	var fl_scene = load("res://GodetteVN/SpecialScenes/flashLightScreen.tscn").instance()
-	get_node("lasting").add_child(fl_scene)
+	var fl_scene:Node = load("res://GodetteVN/SpecialScenes/flashLightScreen.tscn").instance()
+	$lasting.add_child(fl_scene)
 	fl_scene.scale = sc
 	
 func screen_transition(mode:String, eff_name:String,color:Color,eff_dur:float,bg_path:String=''):
@@ -72,7 +66,6 @@ func screen_transition(mode:String, eff_name:String,color:Color,eff_dur:float,bg
 	
 	var func_identifer:String = "transition" 
 	var params:Array = []
-	
 	match eff_name:
 		"fade":
 			func_identifer = eff_name
@@ -88,19 +81,17 @@ func screen_transition(mode:String, eff_name:String,color:Color,eff_dur:float,bg
 		call("play_%s_%s" %[func_identifer,mode], params)
 	else:
 		call("play_%s_%s" %[func_identifer,mode], params)
-	
 
 func reset():
 	_color_panel.visible = false
 	
-func set_debug(debug:bool, text:String=""):
-	var debugger = get_node_or_null("debugger")
-	if debugger:
-		if debug == false:
-			debugger.queue_free()
-		else:
-			debugger.text = text
-		
+#func set_debug(debug:bool, text:String=""):
+#	var debugger = get_node_or_null("debugger")
+#	if debugger:
+#		if debug == false:
+#			debugger.queue_free()
+#		else:
+#			debugger.text = text
 		
 func clean_up():
 	removeLasting()
@@ -174,13 +165,13 @@ func play_fade_full(params:Array) -> void:
 			
 func play_pixelate_in(params:Array):
 	# 0 : duration
-	var r = load("res://GodetteVN/Core/_Details/transitionRect.tscn").instance()
-	self.add_child(r)
+	var r:Node = load("res://GodetteVN/Core/_Details/transitionRect.tscn").instance()
+	add_child(r)
 	r.pixelate_in(params[0])
 
 func play_pixelate_out(params:Array):
-	var r = load("res://GodetteVN/Core/_Details/transitionRect.tscn").instance()
-	self.add_child(r)
+	var r:Node = load("res://GodetteVN/Core/_Details/transitionRect.tscn").instance()
+	add_child(r)
 	r.pixelate_out(params[0])
 	
 func play_pixelate_full(params:Array)->void:

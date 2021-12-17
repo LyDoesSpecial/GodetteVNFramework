@@ -3,8 +3,8 @@ extends TextureRect
 
 var type : String
 
-var following = false
-var dragging_start_pos = Vector2()
+var following:bool = false
+var dragging_start_pos:Vector2 = Vector2()
 
 # Used if type = override, override_dcision
 signal decision(yes)
@@ -57,8 +57,7 @@ func _on_yesButton_pressed():
 			vn.dvar_initialization()
 			stage.clean_up()
 			#----------------------------------------
-			var error = get_tree().change_scene(vn.ROOT_DIR + vn.title_screen_path)
-			if error == OK:
+			if get_tree().change_scene(vn.ROOT_DIR + vn.title_screen_path) == OK:
 				vn.reset_states()
 		"override":
 			emit_signal("decision", true)

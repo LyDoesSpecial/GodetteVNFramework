@@ -1,6 +1,6 @@
 extends Node2D
 
-var hiding = false
+var hiding:bool = false
 
 func _on_SettingButton_pressed():
 	reset_auto_skip()

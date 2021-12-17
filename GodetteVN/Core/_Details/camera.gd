@@ -1,6 +1,6 @@
 extends Camera2D
 
-var shake_amount = 250
+var shake_amount:float = 250.0
 var type : int
 const default_offset:Vector2 = Vector2(0,0)
 
@@ -12,7 +12,7 @@ func _ready():
 	set_process(false)
 	
 func _process(delta):
-	var shake_vec = Vector2()
+	var shake_vec:Vector2 = Vector2()
 	match type:
 		0: shake_vec = vn.Utils.random_vec(Vector2(-shake_amount,shake_amount),\
 			Vector2(-shake_amount, shake_amount))
@@ -24,7 +24,7 @@ func _process(delta):
 	self.offset = shake_vec * delta + default_offset
 
 func shake_off():
-	shake_amount = 250
+	shake_amount = 250.0
 	type = 0
 	set_process(false)
 	self.offset = default_offset
@@ -36,63 +36,60 @@ func shake(amount, time):
 	type = 0
 	set_process(true and not vn.skipping)
 	if time > 0:
-		vn.Utils.schedule_job(self,"shake_off",time,[])
+		MyUtils.schedule_job(self,"shake_off",time,[])
 	
 	# Time < 0 means shake until shake_off is called manually. negative time
 	# can only be entered from code, and not vn script. By default, vn script
 	# will force the value to be positive.
 
-func vpunch(amount:float=600, t:float=0.9):
+func vpunch(amount:float=600.0, t:float=0.9):
 	shake_amount = amount
 	type = 1
 	set_process(true and not vn.skipping)
-	vn.Utils.schedule_job(self,"shake_off",t,[])
+	MyUtils.schedule_job(self,"shake_off",t,[])
 	
-func hpunch(amount:float=600, t:float=0.9):
+func hpunch(amount:float=600.0, t:float=0.9):
 	shake_amount = amount
 	type = 2
 	set_process(true and not vn.skipping)
-	vn.Utils.schedule_job(self,"shake_off",t,[])
+	MyUtils.schedule_job(self,"shake_off",t,[])
 
 func camera_spin(sdir:int, deg:float, t:float, mode = "linear"):
-	if sdir > 0:
-		sdir = 1
-	else:
-		sdir = -1
+	if sdir > 0: sdir = 1
+	else: sdir = -1
 	deg = (sdir*deg)
 	target_degree = self.rotation_degrees+deg
-	var tween = OneShotTween.new()
+	var tween:OneShotTween = OneShotTween.new()
 	add_child(tween)
-	tween.interpolate_property(self, "rotation_degrees", self.rotation_degrees, target_degree, t,
+	var _e:bool = tween.interpolate_property(self, "rotation_degrees", self.rotation_degrees, target_degree, t,
 		vn.Utils.movement_type(mode), Tween.EASE_IN_OUT)
-	tween.start()
+	_e = tween.start()
 		
-	
 func camera_move(off:Vector2, t:float, mode = 'linear'):
 	target_offset = off
 	if t <= 0.05:
 		self.offset = off
 	else:
-		var tween = OneShotTween.new()
+		var tween:OneShotTween = OneShotTween.new()
 		add_child(tween)
-		tween.interpolate_property(self, "offset", self.offset, off, t,
+		var _e:bool = tween.interpolate_property(self, "offset", self.offset, off, t,
 			vn.Utils.movement_type(mode), Tween.EASE_IN_OUT)
-		tween.start()
+		_e = tween.start()
 		
 func zoom_timed(zm:Vector2, t:float, mode:String, off = Vector2(1,1)):
 	target_zoom = zm
 	target_offset = off
-	var m = vn.Utils.movement_type(mode)
-	var tween1 = OneShotTween.new()
-	var tween2 = OneShotTween.new()
+	var m:int = vn.Utils.movement_type(mode)
+	var tween1:OneShotTween = OneShotTween.new()
+	var tween2:OneShotTween = OneShotTween.new()
 	add_child(tween1)
 	add_child(tween2)
-	tween1.interpolate_property(self, "offset", self.offset, off, t,
+	var _e:bool  = tween1.interpolate_property(self, "offset", self.offset, off, t,
 		m, Tween.EASE_IN_OUT)
-	tween2.interpolate_property(self, "zoom", self.zoom, zm, t,
+	_e = tween2.interpolate_property(self, "zoom", self.zoom, zm, t,
 		m, Tween.EASE_IN_OUT)
-	tween1.start()
-	tween2.start()
+	_e = tween1.start()
+	_e = tween2.start()
 
 func zoom(zm:Vector2, off = Vector2(1,1)):
 	# by default, zoom is instant
@@ -112,6 +109,7 @@ func reset():
 	target_degree = 0
 	target_zoom = self.zoom
 	target_offset = default_offset
+	vn.Pgs.playback_events.erase('camera')
 
 func get_camera_data() -> Dictionary:
 	return {'offset': target_offset, 'zoom': target_zoom, 'deg':target_degree}

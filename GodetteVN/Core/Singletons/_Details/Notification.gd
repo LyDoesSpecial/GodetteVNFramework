@@ -1,6 +1,7 @@
 extends CanvasLayer
 
-const notifList = ["quit", "main", "override", 'rollback', 'make_save']
+const notifList:PoolStringArray = PoolStringArray(["quit", "main", "override",\
+	'rollback', 'make_save'])
 
 
 func clear():
@@ -17,7 +18,7 @@ func show(which : String) -> void:
 	vn.inNotif = true
 	get_node("backgroundColor").visible = true
 	if which in notifList:
-		var n = vn.Pre.NOTIF_BOX.instance()
+		var n:Node = vn.Pre.NOTIF_BOX.instance()
 		n.set_text(which)
 		get_node("currentNotif").add_child(n)
 

@@ -1,38 +1,31 @@
 extends Control
 
 func _ready():
-	var voiceVolSlider = $voiceBox/voiceSettings/voiceSlider
-	var effectVolSlider = $effectBox/effectSettings/effectVolumeSlider
-	var musicVolSlider = $musicBox/musicSettings/volumeSlider
-	var bgm_vol = vn.Files.system_data['bgm_volume']
-	var eff_vol = vn.Files.system_data['eff_volume']
-	var voice_vol = vn.Files.system_data['voice_volume']
-	$musicBox/musicSettings/musicVolume.text = str(bgm_vol + 50)
-	$effectBox/effectSettings/effectVolume.text = str(eff_vol + 50)
-	$voiceBox/voiceSettings/voiceVolume.text = str(voice_vol + 50)
-	musicVolSlider.value = bgm_vol
-	effectVolSlider.value = eff_vol
-	voiceVolSlider.value = voice_vol
-	if bgm_vol <= musicVolSlider.min_value:
+	$musicBox/musicSettings/musicVolume.text = str(vn.Files.system_data['bgm_volume'] + 50)
+	$effectBox/effectSettings/effectVolume.text = str(vn.Files.system_data['eff_volume'] + 50)
+	$voiceBox/voiceSettings/voiceVolume.text = str(vn.Files.system_data['voice_volume'] + 50)
+	$musicBox/musicSettings/volumeSlider.value = vn.Files.system_data['bgm_volume']
+	$effectBox/effectSettings/effectVolumeSlider.value = vn.Files.system_data['eff_volume']
+	$voiceBox/voiceSettings/voiceSlider.value =vn.Files.system_data['voice_volume']
+	if vn.Files.system_data['bgm_volume'] <= $musicBox/musicSettings/volumeSlider.min_value:
 		AudioServer.set_bus_mute(1,true)
 	else:
-		AudioServer.set_bus_volume_db(1, bgm_vol)
+		AudioServer.set_bus_volume_db(1, vn.Files.system_data['bgm_volume'])
 		
-	if eff_vol <= effectVolSlider.min_value:
+	if vn.Files.system_data['eff_volume'] <= $effectBox/effectSettings/effectVolumeSlider.min_value:
 		AudioServer.set_bus_mute(2,true)
 	else:
-		AudioServer.set_bus_volume_db(2, eff_vol)
+		AudioServer.set_bus_volume_db(2, vn.Files.system_data['eff_volume'])
 	
-	if voice_vol <= voiceVolSlider.min_value:
+	if vn.Files.system_data['voice_volume'] <= $voiceBox/voiceSettings/voiceSlider.min_value:
 		AudioServer.set_bus_mute(3, true)
 	else:
-		AudioServer.set_bus_volume_db(2, voice_vol)
+		AudioServer.set_bus_volume_db(2, vn.Files.system_data['voice_volume'])
 	
-	var auto = get_node("autoBox/autoSpeed")
-	auto.add_item('Slow')
-	auto.add_item('Normal')
-	auto.add_item('Fast')
-	auto.select(vn.Files.system_data['auto_speed'])
+	$autoBox/autoSpeed.add_item('Slow')
+	$autoBox/autoSpeed.add_item('Normal')
+	$autoBox/autoSpeed.add_item('Fast')
+	$autoBox/autoSpeed.select(vn.Files.system_data['auto_speed'])
 	
 func _on_volumeSlider_value_changed(value):
 	vn.Files.system_data['bgm_volume'] = value

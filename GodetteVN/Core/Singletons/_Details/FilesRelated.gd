@@ -133,47 +133,42 @@ func path_valid(path : String) -> bool:
 
 func load_json(path: String):
 	var f = File.new()
-	var error = f.open(path, File.READ)
-	if error == OK:
+	if f.open(path, File.READ) == OK:
 		var t = JSON.parse(f.get_as_text()).get_result()
 		f.close()
 		return t
 	else:
-		vn.error("Error: %s." % error)
+		push_error("Load json error. File probably corrupted.")
 		
 func load_config_with_pass():
-	var directory = Directory.new();
+	var directory:Directory = Directory.new();
 	if not directory.file_exists(CONFIG_PATH):
-		var file = File.new()
-		var error = file.open_encrypted_with_pass(CONFIG_PATH, File.WRITE, vn.PASSWORD)
-		if error == OK:
+		var file:File = File.new()
+		if file.open_encrypted_with_pass(CONFIG_PATH, File.WRITE, vn.PASSWORD) == OK:
 			file.store_line(JSON.print(_default_config_vars,'\t'))
 			file.close()
-		else:
-			vn.error('Error when opening config: %s' %error)
+		else: # Print out config file?
+			push_error("Error making config file.")
 
-	
-	var f = File.new()
-	var error = f.open_encrypted_with_pass(CONFIG_PATH, File.READ, vn.PASSWORD)
-	if error == OK:
+	var f:File = File.new()
+	if f.open_encrypted_with_pass(CONFIG_PATH, File.READ, vn.PASSWORD) == OK:
 		var t = JSON.parse(f.get_as_text()).get_result()
 		f.close()
 		return t
 	else:
-		vn.error("Error: %s." % error)
+		push_error("Error opening config file.")
 
 #------------------------ Config, Volume, etc. -------------------------------
 
 func write_to_config():
-	var directory = Directory.new();
+	var directory:Directory = Directory.new();
 	if directory.file_exists(CONFIG_PATH):
-		var file = File.new()
-		var error = file.open_encrypted_with_pass(CONFIG_PATH, File.WRITE,vn.PASSWORD)
-		if error == OK:
+		var file:File = File.new()
+		if file.open_encrypted_with_pass(CONFIG_PATH, File.WRITE,vn.PASSWORD) == OK:
 			file.store_line(JSON.print(system_data,'\t'))
 			file.close()
 		else:
-			push_error(error)
+			push_error("Error when opening config file.")
 			
 func load_config():
 	system_data = load_config_with_pass()
@@ -184,22 +179,22 @@ func load_config():
 
 func make_spoilerproof(scene_path:String, all_dialog_blocks):
 	if system_data.has(scene_path) == false:
-		var ev = {}
-		for block in all_dialog_blocks.keys():
+		var ev:Dictionary = {}
+		for block in all_dialog_blocks:
 			ev[block] = -1
 			
 		system_data[scene_path] = ev
 		
 func reset_all_spoilerproof():
-	var regex = RegEx.new()
-	regex.compile("^(res://)(.+)(\\.tscn)$")
-	for k in system_data.keys():
+	var regex:RegEx = RegEx.new()
+	var _e:int = regex.compile("^(res://)(.+)(\\.tscn)$")
+	for k in system_data:
 		if regex.search(k):
 			reset_spoilerproof(k)
 
 func reset_spoilerproof(scene_path:String):
 	if system_data.has(scene_path):
-		for key in system_data[scene_path].keys():
+		for key in system_data[scene_path]:
 			system_data[scene_path][key] = -1
 			
 func remove_spoilerproof(scene_path:String):
