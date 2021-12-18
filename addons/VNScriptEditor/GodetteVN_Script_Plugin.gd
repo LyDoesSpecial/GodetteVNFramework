@@ -1,7 +1,7 @@
 tool
 extends EditorPlugin
 
-var editor_path = preload("res://addons/VNScriptEditor/scriptEditor.tscn")
+var editor_path:PackedScene = preload("res://addons/VNScriptEditor/scriptEditor.tscn")
 var editor_instance
 
 func _enter_tree():

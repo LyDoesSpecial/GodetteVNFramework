@@ -14,7 +14,7 @@ func _on_settingsButton_pressed():
 
 func _on_newGameButton_pressed():
 	vn.Pgs.load_instruction = "new_game"
-	var _err = get_tree().change_scene(vn.ROOT_DIR + vn.start_scene_path)
+	var _e:int = get_tree().change_scene(vn.ROOT_DIR + vn.start_scene_path)
 
 func _on_loadButton_pressed():
 	add_child(load(vn.LOAD_PATH).instance())

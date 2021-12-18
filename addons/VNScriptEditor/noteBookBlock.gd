@@ -1,36 +1,30 @@
 tool
 extends VBoxContainer
 
-var text_visible = true
-var int_type = 0
+var text_visible:bool = true
+var int_type:int = 0
 # int types
 # -1 : comment block
 # 0 : dialog block
 # 1 : choice block
 # 2 : condition block
 
-onready var default_y = self.rect_size.y
-onready var default_y_min = self.rect_min_size.y
-
-func _on_delete_pressed():
-	self.queue_free()
+onready var default_y:float = self.rect_size.y
+onready var default_y_min:float = self.rect_min_size.y
 
 func _on_up_pressed():
-	var organizer = get_parent()
-	var idx = get_index()
+	var idx:int = get_index()
 	if idx > 0:
-		var siblings = organizer.get_children()
+		# var siblings = organizer.get_children()
 		var prev = idx - 1
-		organizer.move_child(self,prev)
+		get_parent().move_child(self,idx - 1)
 		
 		
 func _on_down_pressed():
-	var organizer = get_parent()
-	var idx = get_index()
-	var siblings = organizer.get_children()
-	if idx < siblings.size() - 1:
-		var next = idx + 1
-		organizer.move_child(self,next)
+	var organizer:Node = get_parent()
+	var idx:int = get_index()
+	if idx < organizer.get_children().size() - 1:
+		organizer.move_child(self,idx + 1)
 
 func get_name()->String:
 	return $header/blockName.text.replace(" ", "_")
@@ -66,10 +60,10 @@ func _on_visible_pressed():
 		
 #------------------------ Parsing -------------------------------
 func block_to_json() -> Array:
-	var events = []
-	var ev_list = $MarginContainer/TextEdit.text.split("\n")
+	var events:Array = []
+	var ev_list:PoolStringArray = $MarginContainer/TextEdit.text.split("\n")
 	for i in range(ev_list.size()):
-		var line = ev_list[i].strip_edges()
+		var line:String = ev_list[i].strip_edges()
 		if line == "": continue
 		if line[0] == "#": continue
 		if int_type == 0:
@@ -80,10 +74,10 @@ func block_to_json() -> Array:
 	return events
 	
 func block_to_cond() -> Dictionary:
-	var all_conditions = {}
-	var cond_list = $MarginContainer/TextEdit.text.split("\n")
+	var all_conditions:Dictionary = {}
+	var cond_list:PoolStringArray = $MarginContainer/TextEdit.text.split("\n")
 	for i in range(cond_list.size()):
-		var line = cond_list[i].strip_edges()
+		var line:String = cond_list[i].strip_edges()
 		var output = line_to_cond(line, i+1)
 		if output:
 			all_conditions[output[0]] = output[1]
@@ -92,7 +86,7 @@ func block_to_cond() -> Dictionary:
 	
 func line_to_event(line:String, num:int)->Dictionary:
 	var ev : Dictionary = {}
-	var sm_split = line.split(";")
+	var sm_split:PoolStringArray = line.split(";")
 	if sm_split[sm_split.size()-1] == "":
 		sm_split.remove(sm_split.size()-1)
 	else:
@@ -101,9 +95,9 @@ func line_to_event(line:String, num:int)->Dictionary:
 		$MarginContainer/TextEdit.cursor_set_line(num)
 	
 	for term in sm_split:
-		var temp = term.split("::")
+		var temp:PoolStringArray = term.split("::")
 		if temp.size() == 2:
-			var key = _prepare_text(temp[0])
+			var key:String = _prepare_text(temp[0])
 			var val = _prepare_text(temp[1])
 			if val.is_valid_float():
 				val = float(val)
@@ -121,8 +115,7 @@ func line_to_event(line:String, num:int)->Dictionary:
 	
 func line_to_cond(line:String, num:int):
 	# A condition line should be like: name_of_cond :: cond ;
-	
-	var sm_split = line.split(";")
+	var sm_split:PoolStringArray = line.split(";")
 	if sm_split[sm_split.size()-1] == "":
 		sm_split.remove(sm_split.size()-1)
 	else:
@@ -130,9 +123,9 @@ func line_to_cond(line:String, num:int):
 		push_error("Possibly missing ';' at end of line number " + str(num))
 		
 	if sm_split.size() == 1:
-		var term = (sm_split[0]).split("::")
-		var left = _prepare_text(term[0])
-		var right = _prepare_text(term[1])
+		var term:PoolStringArray = (sm_split[0]).split("::")
+		var left:String = _prepare_text(term[0])
+		var right:String = _prepare_text(term[1])
 		right = _cond_to_array(right)
 		return [left,right]
 
@@ -140,8 +133,8 @@ func line_to_cond(line:String, num:int):
 	
 func line_to_choice(line:String, num:int) -> Dictionary:
 	var ev : Dictionary = {}
-	var sm_split = line.split(";")
-	var l = sm_split.size() - 1
+	var sm_split:PoolStringArray = line.split(";")
+	var l:int = sm_split.size() - 1
 	if sm_split[l] == "":
 		sm_split.remove(l)
 	else:
@@ -151,8 +144,8 @@ func line_to_choice(line:String, num:int) -> Dictionary:
 		
 	if l <= 2:
 		for term in sm_split:
-			var t = term.split("::")
-			var left = _prepare_text(t[0])
+			var t:PoolStringArray = term.split("::")
+			var left:String = _prepare_text(t[0])
 			var right = _prepare_text(t[1])
 			if left == "condition":
 				right = _cond_to_array(right)
@@ -174,14 +167,13 @@ func line_to_choice(line:String, num:int) -> Dictionary:
 				else:
 					push_error("You must put a dictionary as your choice event.")
 					$MarginContainer/TextEdit.cursor_set_line(num)
-
 	else:
 		push_error("Too many fields in the choice event: %s." %[line])
 		$MarginContainer/TextEdit.cursor_set_line(num)
 		
 	return ev
 	
-func _prepare_text(input:String):
+func _prepare_text(input:String)->String:
 	input = input.strip_edges()
 	return input.replace('\t','')
 	
@@ -194,7 +186,7 @@ func _cond_to_array(cond:String):
 		cond = cond.replace(",", "\",\"")
 		var new_str : String = ""
 		for i in cond.length():
-			var letter = cond[i]
+			var letter:String = cond[i]
 			if letter == "\"":
 				if cond[i+1] != "[" and (cond[i+1] != "]" or cond[i-1] != "]")\
 				and (cond[i+1] != "," or cond[i-1] != "]"):
@@ -202,7 +194,7 @@ func _cond_to_array(cond:String):
 			else:
 				new_str += letter
 		
-		print(new_str)
+		print("Converted %s." %cond)
 		return JSON.parse(new_str).result
 	else:
 		# treat this condition as a literal string

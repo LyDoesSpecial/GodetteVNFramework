@@ -7,8 +7,8 @@ export(Color) var line_comment_color = Color(0.445313, 0.445313, 0.445313)
 var lineNum : int
 
 # related to editing
-var _cur_line = ''
-var _pause = false
+var _cur_line:String = ''
+var _pause:bool = false
 #------------------------------------------------------------------------------------
 func _ready():
 	add_color_region("#", '', line_comment_color, true)
@@ -17,15 +17,14 @@ func _ready():
 
 
 func _input(_event):
-	var focused = self.has_focus()
-	if Input.is_key_pressed(KEY_TAB) and not _pause and focused:
+	if Input.is_key_pressed(KEY_TAB) and not _pause and self.has_focus():
 		_pause = true
 		lineNum = cursor_get_line()
 		_cur_line = get_line(lineNum).rstrip(' ')
-		var t = get_selection_text().lstrip(" ").rstrip(" ")
-		var se = t.split(" ")
-		var lead = se[0]
-		var sub = ''
+		var t:String = get_selection_text().lstrip(" ").rstrip(" ")
+		var se:PoolStringArray = t.split(" ")
+		var lead:String = se[0]
+		var sub:String = ''
 		if se.size() > 1:
 			sub = se[1]
 		
@@ -44,7 +43,7 @@ func _input(_event):
 		_pause = false
 		
 func selection_match(lead:String) -> int:
-	var m = -1
+	var m:int = -1
 	match lead:
 		"": m = 0
 		"chara": m = 1
@@ -55,14 +54,11 @@ func selection_match(lead:String) -> int:
 		"font": m = 6
 		"then": m = 7
 		_: m = 1 # anything else will be defaulted to chara
-		
 	return m
 
 func cursor_action():
 	set_line(lineNum, _cur_line + ":: ;")
-	# insert_text_at_cursor(":: ;")
-	cursor_set_column(cursor_get_column() + 2)
-	
+	cursor_set_column(cursor_get_column() + 2)	
 
 
 func character_action(lead:String, sub:String):
@@ -80,7 +76,7 @@ func character_action(lead:String, sub:String):
 		"leave": set_line(lineNum, "chara :: %s leave;" % [lead])
 		"vpunch": set_line(lineNum, "chara :: %s vpunch;" % [lead])
 		"hpunch": set_line(lineNum, "chara :: %s hpunch;" % [lead])
-		_: return
+		"scale": set_line(lineNum, "chara :: %s scale; scale ::*; time :: 1 ; type:: linear;" % [lead])
 
 func camera_action(sub:String):
 	set_line(lineNum,"")
@@ -89,7 +85,6 @@ func camera_action(sub:String):
 		"zoom": set_line(lineNum, "camera :: zoom; scale ::*; loc :: 0 0; time :: 1; type :: linear;")
 		"move": set_line(lineNum, "camera :: move; loc ::*; time :: 1; type :: linear;")
 		"spin": set_line(lineNum, "camera :: spin; deg ::*; time :: 1; sdir :: 1; type :: linear;")
-		_: return
 
 func screen_action(sub:String):
 	set_line(lineNum,"")

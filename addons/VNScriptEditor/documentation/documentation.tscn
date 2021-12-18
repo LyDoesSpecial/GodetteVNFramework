@@ -290,7 +290,10 @@ Explained in the condition section.
 
 5. Path 
 path :: /abc.tscn;
-means the path res://abc.tscn"
+means the path res://abc.tscn
+
+
+"
 selection_enabled = true
 __meta__ = {
 "_edit_use_anchors_": false

@@ -18,16 +18,21 @@ func random_int(lower:int=0, upper:int=100):
 func randval_from_list(list:Array):
 	return list[random_int(0,list.size()-1)]
 	
-func bounded(v:float, b:Vector2, lower_inclusive:bool=true, upper_inclusive:bool=true)->bool:
+func bounded(v:float, b:Vector2, lower_incl:bool=true, upper_incl:bool=true)->bool:
 	var truth: bool
-	if lower_inclusive: truth = (v <= b.x)
+	if lower_incl: truth = (v <= b.x)
 	else: truth = (v < b.x)
-	if upper_inclusive: truth = truth and (v <= b.y)
+	if upper_incl: truth = truth and (v <= b.y)
 	else: truth = truth and (v < b.y)
 	return truth
 	
 #------------------------------------------------------------
+# Free Children
+func free_children(n:Node):
+	for c in n.get_children():
+		c.queue_free()
 
+#------------------------------------------------------------
 # OneShot Job Scheduler
 func schedule_job(n:Node, method:String, wtime:float, params:Array):
 	var timer:Timer = Timer.new()

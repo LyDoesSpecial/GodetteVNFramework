@@ -20,3 +20,5 @@ rect_min_size = Vector2( 1000, 250 )
 
 [node name="TextEdit" parent="MarginContainer" index="0"]
 margin_bottom = 240.0
+
+[connection signal="pressed" from="header/list/delete" to="." method="queue_free"]

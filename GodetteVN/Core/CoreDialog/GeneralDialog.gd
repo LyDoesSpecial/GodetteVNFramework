@@ -13,15 +13,15 @@ export(bool) var refresh_game_ctrl_state = true
 # Core data
 var current_index : int = 0
 var current_block: Array
-var all_blocks = null
-var all_choices = null
-var all_conditions = null
+var all_blocks:Dictionary
+var all_choices:Dictionary
+var all_conditions:Dictionary
 # Other
-var latest_voice = null
+var latest_voice:String = ''
 var idle : bool = false
 var _nullify_prev_yield : bool = false
 # Only used in rollback
-var _cur_bgm = null
+var _cur_bgm:String = ''
 # State controls
 var nvl : bool = false
 var centered : bool = false
@@ -372,7 +372,7 @@ func say(combine : String, words : String, cps = 50, ques:bool = false) -> void:
 			else:
 				nvlBox.set_dialog(uid, words, cps)
 				vn.Pgs.nvl_text = nvlBox.get_text()
-			_voice_to_hist((latest_voice!=null) and vn.voice_to_history, uid, nvlBox.get_text())
+			_voice_to_hist((latest_voice!='') and vn.voice_to_history, uid, nvlBox.get_text())
 	
 	else:
 		if not _hide_namebox(uid):
@@ -395,7 +395,7 @@ func say(combine : String, words : String, cps = 50, ques:bool = false) -> void:
 		else:
 			dialogbox.set_dialog(words, cps)
 			var new_text:String = dialogbox.bbcode_text
-			_voice_to_hist((latest_voice!=null) and vn.voice_to_history, uid, new_text)
+			_voice_to_hist((latest_voice!='') and vn.voice_to_history, uid, new_text)
 			vn.Pgs.playback_events['speech'] = new_text
 		
 		stage.set_highlight(uid)
@@ -813,7 +813,7 @@ func express(combine : String, auto_forw:bool = true, ret_uid:bool = false):
 	var temp:PoolStringArray = combine.split(" ")
 	var uid:String = vn.Chs.forward_uid(temp[0])
 	match temp.size():
-		1:print("No expression passed. Nothing will happen.")
+		1:pass
 		2:stage.change_expression(uid,temp[1])
 		_: push_error("Wrong express event format.")
 	auto_load_next(auto_forw)
@@ -947,8 +947,7 @@ func wait(time : float) -> void:
 func on_choice_made(ev : Dictionary, rollback_to_choice = true) -> void:
 	# rollback_to_choice is only used when called externally.
 	QM.enable_skip_auto()
-	for n in choiceContainer.get_children():
-		n.queue_free()
+	_u.free_children(choiceContainer)
 	
 	if allow_rollback:
 		if rollback_to_choice:
@@ -984,8 +983,7 @@ func on_rollback():
 		centered = false
 		nvl_off()
 		# choiceContainer.propagate_call('queue_free') Will 
-		for n in choiceContainer.get_children(): 
-			n.queue_free()
+		_u.free_children(choiceContainer)
 		generate_nullify()
 	else: # Show to readers that they cannot rollback further
 		vn.Notifs.show('rollback')
@@ -998,7 +996,7 @@ func on_rollback():
 	vn.Pgs.currentSaveDesc = last['currentSaveDesc']
 	vn.Pgs.currentIndex = last['currentIndex']
 	vn.Pgs.currentBlock = last['currentBlock']
-	vn.Pgs.playback_events = last['playback']
+	vn.Pgs.playback_events = last['playback']	
 	vn.Chs.chara_name_patch = last['name_patches']
 	vn.Chs.patch_display_names()
 	current_index = vn.Pgs.currentIndex
@@ -1198,7 +1196,7 @@ func _check_latest_voice(ev:Dictionary)->bool:
 			voice(ev['voice'], false)
 			return true
 	else:
-		latest_voice = null
+		latest_voice = ''
 	return false
 	
 func _voice_to_hist(has_v:bool, who:String, text:String)->void:

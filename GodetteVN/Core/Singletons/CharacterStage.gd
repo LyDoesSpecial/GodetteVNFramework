@@ -60,7 +60,7 @@ func character_scale(uid:String, ev:Dictionary):
 	if type == 'instant' or vn.skipping or vn.inLoading:
 		c.scale = ev['scale']
 	else:
-		c.change_scale(ev['scale'], MyUtils._has_or_default(ev,'time',1), type)
+		c.change_scale(ev['scale'], MyUtils._has_or_default(ev,'time',1.0), type)
 		
 func character_move(uid:String, ev:Dictionary):
 	if uid == 'all': 

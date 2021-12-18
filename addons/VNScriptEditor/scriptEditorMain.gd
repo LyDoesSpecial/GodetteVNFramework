@@ -1,13 +1,13 @@
 tool
 extends MarginContainer
 
-var in_timeline = false
-var dialog_block = preload("res://addons/VNScriptEditor/dialogBlock.tscn")
-var choice_block = preload("res://addons/VNScriptEditor/choiceBlock.tscn")
-var comment_block = preload("res://addons/VNScriptEditor/commentBlock.tscn")
-var condition_block = preload("res://addons/VNScriptEditor/conditionBlock.tscn")
+var in_timeline:bool = false
+var dialog_block:PackedScene = preload("res://addons/VNScriptEditor/dialogBlock.tscn")
+var choice_block:PackedScene = preload("res://addons/VNScriptEditor/choiceBlock.tscn")
+var comment_block:PackedScene = preload("res://addons/VNScriptEditor/commentBlock.tscn")
+var condition_block:PackedScene = preload("res://addons/VNScriptEditor/conditionBlock.tscn")
 
-onready var organizer = $hbox/vbox/hsplit/notebook/notebookOrganizer
+onready var organizer:VBoxContainer = $hbox/vbox/hsplit/notebook/notebookOrganizer
 
 func _new_notebook():
 	in_timeline = true
@@ -30,7 +30,7 @@ func _on_newDialogButton_pressed():
 	return d
 	
 func _new_dialog_block(dname:String, content:String):
-	var d = _on_newDialogButton_pressed()
+	var d:Node = _on_newDialogButton_pressed()
 	d.set_block_name(dname)
 	d.set_content(content)
 	if dname == "starter":
@@ -56,46 +56,39 @@ func _fname_standardize(t:String)->String:
 
 func _on_saveButton_pressed():
 	if in_timeline == false: return
-	var file_name = _fname_standardize($hbox/vbox/headLayers/head/tlname.text)
+	var file_name:String = _fname_standardize($hbox/vbox/headLayers/head/tlname.text)
 	if file_name == '':
 		$AcceptDialog.dialog_text = "Please Enter a Timeline Name."
 		$AcceptDialog.popup_centered()
 	else:
-		var file = File.new()
-		var error = file.open("res://VNScript/" + file_name + '.txt', File.WRITE)
-		if error == OK:
-			var all_blocks = organizer.get_children()
+		var file:File = File.new()
+		var _e:int = file.open("res://VNScript/" + file_name + '.txt', File.WRITE)
+		if _e == OK:
+			var all_blocks:Array = organizer.get_children()
+			var type_names:Dictionary = {0:'DIALOG',1:'CHOICE',2:'CONDITIONS',-1:'COMMENT'}
 			for block in all_blocks:
-				var bname = block.get_name()
+				var bname:String = block.get_name()
 				bname = bname.strip_edges()
 				if bname == "": bname = "NAMELESS"
-				var btype = block.int_type
-				if btype == 0 or btype == 1:
-					if btype == 1: 
-						btype = "CHOICE"
-					else:
-						btype = "DIALOG"
-					var s = "$--%s--%s" % [btype, bname]
-					file.store_line(s)
-				elif btype == 2:
-					btype = "CONDITIONS"
-					var s = "$--%s" % [btype]
-					file.store_line(s)
-				elif btype == -1:
-					var s = "$--COMMENT"
-					file.store_line(s)
-					
-				var bcontent = block.get_plain_text()
+				var btype:int = block.int_type
+				var s:String
+				match block.int_type:
+					0: s = "$--%s--%s" % [type_names[0], bname]
+					1: s = "$--%s--%s" % [type_names[1], bname]
+					2: s = "$--%s" % [type_names[2]]
+					-1: s = "$--%COMMENT"
+				
+				file.store_line(s)
+				var bcontent:String = block.get_plain_text()
 				file.store_line(bcontent)
 				file.store_line("$--END")
-			
 			
 			$AcceptDialog.dialog_text = "Saved as .txt successfully. You can find " + file_name + ".txt in "+\
 			"the VNscript folder."
 			$AcceptDialog.popup_centered()
 			file.close()
 		else:
-			push_error('Error when saving: %s' %error)
+			push_error('Error %s when saving.' %_e)
 
 func _on_loadButton_pressed():
 	$FileDialog.popup_centered()
@@ -121,58 +114,57 @@ func _clear():
 		c.queue_free()
 	
 func _load_new_text(path):
-	var has_starter = false
-	var has_cond = false
-	var textFile = File.new()
-	var err = textFile.open(path, File.READ)
-	if err == OK:
+	var has_starter:bool = false
+	var has_cond:bool = false
+	var textFile:File = File.new()
+	var _e = textFile.open(path, File.READ)
+	if _e == OK:
 		in_timeline = true
-		var blocks = textFile.get_as_text().split("$--END")
+		var blocks:PoolStringArray = textFile.get_as_text().split("$--END")
 		for content in blocks:
 			content = content.strip_edges()
 			if content == "": continue
-			var temp = content.split("\n", true, 1)
-			var t = temp[0].strip_edges()
-			var text_content = ""
+			var temp:PoolStringArray = content.split("\n", true, 1)
+			var t:String = temp[0].strip_edges()
+			var text_content:String = ""
 			if temp.size()>=2: text_content = temp[1].strip_edges()
-			if "$--DIALOG" in t:
-				var dname = t.split("--")[2]
+			if t.begins_with("$--DIALOG"):
+				var dname:String = t.split("--")[2]
 				if dname == "starter":
 					has_starter = true
 					
 				_new_dialog_block(dname, text_content)
 				
-			elif "$--COMMENT" in t:
+			elif t.begins_with("$--COMMENT"):
 				_new_comment_block(text_content)
-			elif "$--CONDITIONS" in t:
+			elif t.begins_with("$--CONDITIONS"):
 				has_cond = true
 				_new_condition_block(text_content)
-			elif "$--CHOICE" in t:
-				var cname = t.split("--")[2]
-				_new_choice_block(cname, text_content)
+			elif t.begins_with("$--CHOICE"): # $--CHOICE--CHOICE_NAME
+				_new_choice_block(t.split("--")[2], text_content)
 		if has_starter == false:
 			_new_dialog_block("starter", "")
 		if has_cond == false:
 			_new_condition_block()
 		
+		textFile.close()
 		print("Finished Loading.")
 	else:
-		push_error("Failed to load text file.")
+		push_error("Failed to load text file with error %s."%_e)
 
 func _on_FileDialog_file_selected(path):
 	_clear()
-	var temp = path.split('/')
-	var fname = temp[temp.size()-1].split('.')[0]
+	var temp:PoolStringArray = path.split('/')
+	var fname:String = temp[temp.size()-1].split('.')[0]
 	$hbox/vbox/headLayers/head/tlname.text = fname
 	_load_new_text(path)
-
 
 func _on_jsonButton_pressed():
 	if in_timeline == false: return
 	_on_saveButton_pressed()
-	var dialog_blocks = {}
-	var choice_blocks = {}
-	var cond_blocks = {}
+	var dialog_blocks:Dictionary = {}
+	var choice_blocks:Dictionary = {}
+	var cond_blocks:Dictionary = {}
 	for block in organizer.get_children():
 		if block.int_type == 0:
 			dialog_blocks[block.get_name()] = block.block_to_json()
@@ -181,16 +173,16 @@ func _on_jsonButton_pressed():
 		elif block.int_type == 2:
 			cond_blocks = block.block_to_cond()
 			
-	var output = {"Dialogs":dialog_blocks,"Choices": choice_blocks, "Conditions": cond_blocks}
-	var fname = $hbox/vbox/headLayers/head/tlname.text
-	var file = File.new()
-	var error = file.open("res://VNScript/" + fname + '.json', File.WRITE)
-	if error == OK:
+	var output:Dictionary = {"Dialogs":dialog_blocks,"Choices": choice_blocks, "Conditions": cond_blocks}
+	var fname:String = $hbox/vbox/headLayers/head/tlname.text
+	var file:File = File.new()
+	var _e:int = file.open("res://VNScript/" + fname + '.json', File.WRITE)
+	if _e == OK:
 		print("TO JSON SUCCESS.")
 		file.store_line(JSON.print(output,'\t'))
 		$AcceptDialog.dialog_text = "To Json success! You can find " + fname + ".json in the VNScript folder."
 		$AcceptDialog.popup_centered()
 		file.close()
 	else:
-		push_error(error)
+		push_error("Error with error number %s"%_e)
 
