@@ -57,25 +57,8 @@ func _ready():
 	register_dvar_propagation("parallax_speed_change", "parallax_speed")
 	# See comment 1 below
 	start_scene(conversation_blocks, choice_blocks, {})
-	
-# Comment 1:
-# register_dvar_propagation: here we're associating the dvar
-# parallax_speed with the method parallax_speed_change
-# The default behavior is as follows: whenever the dvar parallax_speed is changed,
-# The node will fire a propagate_call (look it up in Godot documentation if you are
-# not familiar) and every subnode that has the function parallax_speed_change will
-# be called automatically, and if a parent node and a child node both have this
-# function, then the parent node will be called first.
-# Moreover, because this is a change according to a dvar value, whenever you rollback,
-# a propagate_call will also be fired.
-# The format is: register_dvar_propagation("name_of_func", "dvar")
-# And this dvar will be passed into the function name_of_func as argument
 
-# You can only change one dvar at a time, so you can only associate one dvar
-# in one registeration. If you have multiple functions that depend on the same
-# dvar, simply register twice. If your function depends on two dvars, try to 
-# separate it into two functions. (Maybe this is not the best approach?)
-
-# Dvar propagation can be used to control the exterior scenes like this. 
-# (Parallax background is exterior to the vn system. 
-# Exterior: something that is not directly controlled by GeneralDialog)
+func _exit_tree(): # This dvar is only meant to be used in this scene. No
+	# need to carry it to other scenes and cost extra memory.
+	# BTW it is initialized in ParallaxBackground.
+	vn.dvar.erase('parallax_speed')

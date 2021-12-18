@@ -4,7 +4,7 @@ class_name ObjectTimer
 signal call_func(params)
 
 var _counter:int = 0
-var _total:int = 1
+var _total:float = 1
 var _params = null
 
 # This var means whether params should include counter and total
@@ -20,7 +20,7 @@ var _include:bool = false
 
 func _init(par:Node, total_time:float, interval:float, func_name:String, params:Array=[], include:bool=false):
 	total_time = stepify(total_time, 0.1)
-	self._total = int(round(total_time/interval))
+	self._total = round(total_time/interval)
 	self.wait_time = interval
 	self._params = params
 	if include:

@@ -549,12 +549,12 @@ func change_scene_to(path : String):
 	vn.Pgs.rollback_records.clear()
 	if path in [vn.title_screen_path, vn.ending_scene_path]:
 		music.stop_bgm()
+		var _err:int = get_tree().change_scene(vn.ROOT_DIR + path)
 	elif path == "free":
 		music.stop_bgm()
 		queue_free()
 	else:
-		var err:int = get_tree().change_scene(vn.ROOT_DIR + path)
-		if err == OK: queue_free()
+		var _err:int = get_tree().change_scene(vn.ROOT_DIR + path)
 
 #------------------------------ Related to Dvar --------------------------------
 func set_dvar(ev : Dictionary) -> void:
@@ -821,11 +821,11 @@ func express(combine : String, auto_forw:bool = true, ret_uid:bool = false):
 
 #--------------------------------- Weather -------------------------------------
 func change_weather(we:String, auto_forw = true):
-	screen.show_weather(we) # If given weather doesn't exist, nothing will happen
 	if !vn.inLoading:
 		if we in ["", "off"]:
 			vn.Pgs.playback_events.erase('weather')
 		else:
+			screen.show_weather(we) # If given weather doesn't exist, nothing will happen
 			vn.Pgs.playback_events['weather'] = {'weather':we}
 		auto_load_next(auto_forw)
 

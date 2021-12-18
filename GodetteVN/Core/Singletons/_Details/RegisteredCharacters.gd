@@ -4,7 +4,8 @@ extends Node
 # are in the Character folder.
 var stage_characters:Array = [
 	"female", 
-	"test2"
+	"test2",
+	"gt"
 ]
 
 

@@ -10,6 +10,7 @@ func _ready():
 	# Everything but moonLayer will have speed -25
 	moon_speed = -15
 	
+	vn.dvar['parallax_speed'] = 120
 	# Do this in _ready because if you do it outside, there will be a dvar
 	# not exist error (because of the load order)
 	uniform_speed = vn.dvar['parallax_speed']

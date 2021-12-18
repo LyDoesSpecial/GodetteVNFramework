@@ -21,7 +21,7 @@ var _fading:bool = false
 #-----------------------------------------------------
 # Character attributes
 var loc:Vector2 = Vector2()
-var current_expression : String = "default"
+var current_expression : String = ""
 
 #-------------------------------------------------------------------------------
 
@@ -38,7 +38,7 @@ func change_expression(e : String, in_fadein:bool=false) -> bool:
 			_:
 				current_expression = e
 				play(e)
-		if not in_fadein and not _fading and not vn.inLoading: # during fading, no dummy fadeout
+		if not in_fadein and not _fading and prev_exp!='': # during fading, no dummy fadeout
 			_dummy_fadeout(expFrames, prev_exp)
 		return true
 	else:
